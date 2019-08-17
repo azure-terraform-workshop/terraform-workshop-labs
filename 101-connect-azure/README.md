@@ -32,6 +32,32 @@ resource "azurerm_resource_group" "main" {
 
 This will create a simple Resource Group and allow you to walk through the Terraform Workflow.
 
+### Authenticate To Azure
+
+**Option 1**
+
+Set the following environment variables:
+
+```sh
+$ export ARM_CLIENT_ID="00000000-0000-0000-0000-000000000000"
+$ export ARM_CLIENT_SECRET="00000000-0000-0000-0000-000000000000"
+$ export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
+$ export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
+```
+
+**Option 2**
+
+Login via the azure cli:
+
+```sh
+az login
+
+# Only needed if you have access to more than one Azure Subscription.
+az account set -s "SUBSCRIPTION ID"
+```
+
+More information can be found [here](https://www.terraform.io/docs/providers/azurerm/auth/azure_cli.html).
+
 ### Run the Terraform Workflow
 
 `terraform init`
