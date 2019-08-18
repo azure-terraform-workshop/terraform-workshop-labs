@@ -334,6 +334,10 @@ Using the Public IP output value, Remote Desktop into the Virtual Machine to ver
 
 Success! You have now stood up a Virtual Machine in Azure using Terraform!
 
+### Scaling the Virtual Machine (extra credit)
+
+Utilize the [count meta arguemnt](https://www.terraform.io/intro/examples/count.html) to allow for the scaling of VM's.
+
 ### Clean up
 
 When you are done, run `terraform destroy` to remove everything we created:
