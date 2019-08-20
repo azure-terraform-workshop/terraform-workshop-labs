@@ -1,4 +1,4 @@
-# 03 - Azure Virtual Machine
+# Azure Virtual Machine
 
 ## Expected Outcome
 
