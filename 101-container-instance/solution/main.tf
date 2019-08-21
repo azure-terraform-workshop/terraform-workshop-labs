@@ -104,5 +104,5 @@ resource "azurerm_container_group" "windows" {
 }
 
 output "aci-iis-fqdn" {
-  value = azurerm_container_group.windows.fqdn
+  value = "http://${azurerm_container_group.windows.fqdn}"
 }

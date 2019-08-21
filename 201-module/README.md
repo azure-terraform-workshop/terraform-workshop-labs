@@ -1,4 +1,4 @@
-# 05 - Terraform Modules
+# Terraform Modules
 
 ## Expected Outcome
 

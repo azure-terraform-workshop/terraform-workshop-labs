@@ -1,15 +1,7 @@
-variable "prefix" {
-  default = "PREFIX"
-}
+variable "prefix" {}
 
-variable "location" {
-  default = "centralus"
-}
+variable "location" {}
 
-variable "username" {
-  default = "someadmin"
-}
+variable "username" {}
 
-variable "vmss_count" {
-  default = 1
-}
+variable "vmss_count" {}
