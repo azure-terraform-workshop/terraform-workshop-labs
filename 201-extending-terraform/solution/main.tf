@@ -1,10 +1,11 @@
 resource "random_password" "password" {
   length  = 16
   special = true
+  count = 5
 }
 
 output "password" {
-  value = random_password.password.result
+  value = random_password.password.*.result
 }
 
 resource "random_uuid" "guid" {

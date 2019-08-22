@@ -26,7 +26,7 @@ resource "azurerm_virtual_network" "main" {
   name                = "${var.prefix}-vnet"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name  
+  resource_group_name = azurerm_resource_group.main.name
 }
 
 resource "azurerm_subnet" "main" {
@@ -40,7 +40,7 @@ resource "azurerm_network_interface" "main" {
   name                = "${var.prefix}-nic-${count.index}"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  count = var.vm_count
+  count               = var.vm_count
 
   ip_configuration {
     name                          = "config1"
@@ -56,7 +56,7 @@ resource "azurerm_virtual_machine" "main" {
   resource_group_name   = azurerm_resource_group.main.name
   network_interface_ids = [azurerm_network_interface.main[count.index].id]
   vm_size               = "Standard_A2_v2"
-  count = var.vm_count
+  count                 = var.vm_count
 
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
@@ -86,7 +86,7 @@ resource "azurerm_public_ip" "main" {
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Static"
-  count = var.vm_count
+  count               = var.vm_count
 }
 
 # output "private-ip" {

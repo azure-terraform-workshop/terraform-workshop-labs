@@ -6,7 +6,7 @@ variable "admin_password" {
 }
 
 variable "resource_prefix" {
-  default = "PREFIX" #no dashes or numbers
+  default = "tstraub" #no dashes or numbers
 }
 
 # You'll usually want to set this to a region near you.
@@ -37,7 +37,7 @@ resource "azurerm_subnet" "subnet" {
 
 # Create public IP
 resource "azurerm_public_ip" "publicip" {
-  name                = "${var.resource_prefix}TFPublicIP"
+  name                = "${var.resource_prefix}TFPublicIPaa"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.rg.name}"
   allocation_method   = "Dynamic"
