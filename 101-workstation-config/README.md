@@ -46,6 +46,20 @@ Chocolatey v0.10.15
 Please run 'choco -?' or 'choco <command> -?' for help menu.
 ```
 
+### Trouble with Chocolatey??
+
+If you are having issues installing Chocolatey, follow each of these guides to install the requirements directly.
+
+<details><summary>View Direct Downloads</summary>
+<p>
+
+- https://git-scm.com/download
+- https://www.terraform.io/downloads.html
+- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest
+
+</p>
+</details>
+
 ### Download Git, Azure CLI, and Terraform
 
 Run the following to install everything in order:
