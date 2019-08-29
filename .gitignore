@@ -8,3 +8,8 @@
 # .tfvars files
 *.tfvars
 *.notes.md
+notes.md
+301-workspaces/solution/payload.json
+301-workspaces/solution/run.sh
+
+examples/
