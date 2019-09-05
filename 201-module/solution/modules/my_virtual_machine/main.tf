@@ -9,6 +9,9 @@ variable "prefix" {}
 variable "vm_size" {}
 variable "username" {}
 variable "password" {}
+variable "address_space" {}
+variable "address_prefix" {}
+
 
 variable "location" {
   default = "centralus"
@@ -21,7 +24,7 @@ resource "azurerm_resource_group" "main" {
 
 resource "azurerm_virtual_network" "main" {
   name                = "${var.prefix}-vnet"
-  address_space       = ["10.0.0.0/16"]
+  address_space       = ["${var.address_space}"]
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 }
@@ -30,7 +33,7 @@ resource "azurerm_subnet" "main" {
   name                 = "${var.prefix}-subnet"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
-  address_prefix       = "10.0.1.0/24"
+  address_prefix       = "${var.address_prefix}"
 }
 
 resource "azurerm_network_interface" "main" {
@@ -51,7 +54,7 @@ resource "azurerm_virtual_machine" "main" {
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
   network_interface_ids = [azurerm_network_interface.main.id]
-  vm_size               = "Standard_A2_v2"
+  vm_size               = "${var.vm_size}"
 
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
