@@ -38,6 +38,9 @@ variable "location" {}
 variable "username" {}
 
 variable "vmss_count" {}
+variable "address_space" {}
+
+variable "address_prefix" {}
 ```
 
 ### Create Variables TF File
