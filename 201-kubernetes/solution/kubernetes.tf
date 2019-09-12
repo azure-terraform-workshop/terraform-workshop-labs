@@ -15,8 +15,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
     vnet_subnet_id = "${azurerm_subnet.main.id}"
   }
 
-    service_principal {
-      client_id     = "${var.client_id}"
-      client_secret = "${var.client_secret}"
-    }
+  service_principal {
+    client_id     = "${var.client_id}"
+    client_secret = "${var.client_secret}"
+  }
+}
+
+resource "local_file" "foo" {
+    content     = "${azurerm_kubernetes_cluster.aks.kube_config_raw}"
+    filename = "~/.kube/config"
 }

@@ -6,7 +6,7 @@
 *.tfstate.*
 
 # .tfvars files
-*.tfvars
+**/*.tfvars
 *.notes.md
 notes.md
 301-workspaces/solution/payload.json
@@ -14,3 +14,5 @@ notes.md
 
 examples/
 !*/solution*/terraform.tfvars
+
+**/.kube
