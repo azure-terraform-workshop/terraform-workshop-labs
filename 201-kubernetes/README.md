@@ -147,7 +147,19 @@ variable "client_secret" {}
 
 ```
 
+### Supply values for variables
 
+Create a file `terraform.auto.tfvars` and fill in the values:
+
+```
+prefix="demo"
+name="k8s"
+location="eastus2"
+address_prefix="10.1.0.0/24"
+address_space="10.1.0.0/16"
+client_id="xxxx..."
+client_secret="xxxx..."
+```
 
 
 ### Run Terraform Workflow
