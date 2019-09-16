@@ -8,7 +8,7 @@ In this challenge, you will create an individual user token for use in future la
 
 ### Login
 
-Login to <https://aa-training.digitalinnovation.dev>:
+Login to <https://cmm-training.digitalinnovation.dev>:
 
 ![](img/tfe-login.png)
 
@@ -16,11 +16,11 @@ Verify you are part of an Organization:
 
 ![](img/tfe-organization.png)
 
-**IMPORTANT** Take note of you organization name, it can be found in the top left corner of the UI, or in the URL "https://aa-training.digitalinnovation.dev/app/TFE_ORG/workspaces". This will be referenced as your TFE_ORG.
+**IMPORTANT** Take note of you organization name, it can be found in the top left corner of the UI, or in the URL "https://cmm-training.digitalinnovation.dev/app/TFE_ORG/workspaces". This will be referenced as your TFE_ORG.
 
 ### Generate Token
 
-Navigate to <https://aa-training.digitalinnovation.dev/app/settings/tokens> to generate a token:
+Navigate to <https://cmm-training.digitalinnovation.dev/app/settings/tokens> to generate a token:
 
 ![](img/tfe-token-gen.png)
 

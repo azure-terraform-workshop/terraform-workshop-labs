@@ -26,7 +26,7 @@ The process involves several back and forth changes and is documented well in th
 
 ### Verify Connection
 
-Navigate to <https://aa-training.digitalinnovation.dev> and click "+ New Workspace".
+Navigate to <https://cmm-training.digitalinnovation.dev> and click "+ New Workspace".
 
 Click the VCS Connection in the "Source" section.
 
