@@ -2,6 +2,8 @@
 
 Workshop labs for Terraform courses.
 
+<bit.do/terraform-training>
+
 ## Surveys
 
 - [Day 1 Survey](https://forms.gle/USrYQWMvomNzRb8H6)
