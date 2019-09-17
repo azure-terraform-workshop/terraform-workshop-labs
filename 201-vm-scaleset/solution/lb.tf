@@ -3,6 +3,7 @@ resource "azurerm_public_ip" "main" {
   location            = azurerm_resource_group.main.location
   name                = "${var.prefix}-pubip"
   allocation_method   = "Static"
+  domain_name_label   = "${lower(var.prefix)}vmsspublicip"
 }
 
 resource "azurerm_lb" "main" {
@@ -31,7 +32,7 @@ resource "azurerm_lb_rule" "lb-app" {
   name                           = "AppRule"
   protocol                       = "Tcp"
   frontend_port                  = 80
-  backend_port                   = 80
+  backend_port                   = 8000
   frontend_ip_configuration_name = "PublicIPAddress"
 }
 
@@ -41,6 +42,6 @@ resource "azurerm_lb_probe" "http" {
   loadbalancer_id     = azurerm_lb.main.id
   name                = "ptfe-app-http-probe"
   protocol            = "Http"
-  request_path        = "/_health_check"
-  port                = 80
+  request_path        = "/"
+  port                = 8000
 }

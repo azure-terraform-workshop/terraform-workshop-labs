@@ -1,12 +1,5 @@
-terraform {
-  required_version = ">= 0.12.6"
-  required_providers {
-    azurerm = "= 1.31"
-  }
-}
-
 resource "azurerm_resource_group" "main" {
-  name     = "${var.prefix}-rg"
+  name     = "${var.prefix}-vmss-rg"
   location = var.location
 }
 
