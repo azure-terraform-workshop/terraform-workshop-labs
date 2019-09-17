@@ -6,6 +6,8 @@ In this challenge, you will create a kubernetes cluster, and deploy a service, i
 
 The service to deploy is just an  example of how terraform can be used to manage kubernetes resources just like Azure resources.
 
+We will also need to use the client_id and client_secret of your service principal, so keep those values handy.
+
 
 The resources you will use in this challenge:
 
@@ -149,7 +151,7 @@ variable "client_secret" {}
 
 ### Supply values for variables
 
-Create a file `terraform.auto.tfvars` and fill in the values:
+Create a file `terraform.auto.tfvars` and fill in the values.  Use the client_id and client_secret of your service principal used to execute terraform.  Kubernetes needs this to be able to provision load balancers and infrastructure on the clusters behalf:
 
 ```
 prefix="demo"
