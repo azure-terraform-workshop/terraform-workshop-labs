@@ -1,20 +1,13 @@
-terraform {
-  required_version = ">= 0.12.6"
-  required_providers {
-    azurerm = "= 1.31"
-  }
-}
-
 variable "vm_count" {
   default = 2
 }
 
 variable "prefix" {
-  default = "PREFIX-vm"
+  default = "tstraub-live"
 }
 
 variable "location" {
-  default = "centralus"
+  default = "eastus"
 }
 
 resource "azurerm_resource_group" "main" {
@@ -59,10 +52,13 @@ resource "azurerm_virtual_machine" "main" {
   count                 = var.vm_count
 
   storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
     version   = "latest"
+  }
+  os_profile_linux_config {
+    disable_password_authentication = false
   }
 
   storage_os_disk {
@@ -77,8 +73,6 @@ resource "azurerm_virtual_machine" "main" {
     admin_username = "testadmin"
     admin_password = "Password1234!"
   }
-
-  os_profile_windows_config {}
 }
 
 resource "azurerm_public_ip" "main" {
@@ -89,12 +83,12 @@ resource "azurerm_public_ip" "main" {
   count               = var.vm_count
 }
 
-# output "private-ip" {
-#   value       = azurerm_network_interface.main.*.private_ip_address
-#   description = "Private IP Address"
-# }
+output "private-ip" {
+  value       = azurerm_network_interface.main.*.private_ip_address
+  description = "Private IP Address"
+}
 
-# output "public-ip" {
-#   value       = azurerm_public_ip.main.*.ip_address
-#   description = "Public IP Address"
-# }
+output "public-ip" {
+  value       = azurerm_public_ip.main.*.ip_address
+  description = "Public IP Address"
+}

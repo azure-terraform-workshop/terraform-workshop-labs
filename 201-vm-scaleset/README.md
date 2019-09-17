@@ -132,11 +132,12 @@ resource "azurerm_virtual_machine_scale_set" "main" {
       primary                                = true
       subnet_id                              = azurerm_subnet.main.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
-      public_ip_address_configuration {
-        name              = "${var.prefix}vmsspubip"
-        idle_timeout      = 4
-        domain_name_label = "${var.prefix}vmsspubip"
-      }
+      # Uncomment to create a public IP for each instance
+      # public_ip_address_configuration {
+      #   name              = "${var.prefix}vmsspubip"
+      #   idle_timeout      = 4
+      #   domain_name_label = "${var.prefix}vmsspubip"
+      # }
     }
   }
 }
