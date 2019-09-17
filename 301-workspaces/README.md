@@ -24,7 +24,7 @@ Once created, clone the repository to your local machine.
 
 Login to TFE and click the "+ New Workspace" button.
 
-Select the VSC Connection to github.
+Select the VCS Connection to github.
 
 In the repository section, enter the name of the repository you created above.
 
