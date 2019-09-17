@@ -338,7 +338,7 @@ Success! You have now stood up a Virtual Machine in Azure using Terraform!
 ### Windows VM (extra credit)
 
 Add the Terraform needed to create another VM to the same subnet, but using a Windows Base image.
-This will require a slightly different `azurerm_network_interface` resource block, can you determine what needs to change based on the online docs?
+This will require a slightly different `azurerm_virtual_machine` resource block, can you determine what needs to change based on the online docs?
 
 Hint:
 
