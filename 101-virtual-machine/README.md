@@ -32,20 +32,9 @@ Create a `main.tf` file to hold our configuration.
 Create a few variables that will help keep our code clean:
 
 ```hcl
-terraform {
-  required_version = ">= 0.12.6"
-  required_providers {
-    azurerm = "= 1.31"
-  }
-}
+variable "prefix" {}
 
-variable "prefix" {
-  default = "PREFIX"
-}
-
-variable "location" {
-  default = "centralus"
-}
+variable "location" {}
 ```
 
 ### Create a Resource Group
@@ -54,7 +43,7 @@ Now create a Resource Group to contain all of our infrastructure using the varia
 
 ```hcl
 resource "azurerm_resource_group" "main" {
-  name     = "${var.prefix}-rg"
+  name     = "${var.prefix}-vm-rg"
   location = var.location
 }
 ```
@@ -82,6 +71,17 @@ resource "azurerm_subnet" "main" {
 ```
 
 > Notice that we use the available metadata from the `azurerm_resource_group.main` resource to populate the parameters of other resources.
+
+### Pass in Variables
+
+Create a file called 'terraform.tfvars' and add the folowing variables:
+
+```sh
+prefix   = ""
+location = ""
+```
+
+> Note: Be sure to add a unique prefix, and an appropriate value for location. Do you know where to find valid 'locations'?
 
 ### Run Terraform Workflow
 
@@ -151,16 +151,16 @@ When it completes you should see:
 Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
 ```
 
-### Create the Azure Virtual Machine
+### Create the Linux Azure Virtual Machine
 
 Now that we have base networking in place, we will add a Network Interface and Virtual Machine.
-We will create a VM with an Azure Marketplace Image for Windows Server 2016 Datacenter.
+We will create a VM with an Azure Marketplace Image for Ubuntu 18.04.
 
 Create the Network Interface resource:
 
 ```hcl
-resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}-nic"
+resource "azurerm_network_interface" "linux" {
+  name                = "${var.prefix}-linuxnic"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -175,34 +175,35 @@ resource "azurerm_network_interface" "main" {
 Create the Virtual Machine resource:
 
 ```hcl
-resource "azurerm_virtual_machine" "main" {
-  name                  = "${var.prefix}-vm"
+resource "azurerm_virtual_machine" "linux" {
+  name                  = "${var.prefix}-linuxvm"
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
-  network_interface_ids = [azurerm_network_interface.main.id]
+  network_interface_ids = [azurerm_network_interface.linux.id]
   vm_size               = "Standard_A2_v2"
 
-  storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
-    version   = "latest"
-  }
-
   storage_os_disk {
-    name              = "${var.prefix}vm-osdisk"
+    name              = "${var.prefix}linuxvm-osdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
   os_profile {
-    computer_name  = "${var.prefix}vm"
+    computer_name  = "${var.prefix}linuxvm"
     admin_username = "testadmin"
     admin_password = "Password1234!"
   }
 
-  os_profile_windows_config {}
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
 }
 ```
 
@@ -210,9 +211,9 @@ Take note of the OS image:
 
 ```hcl
   storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
 ```
@@ -221,13 +222,13 @@ Run a plan and apply to create both these resources.
 
 ### Add a Public IP
 
-At this point you should have a running Virtual Machine in Azure running Windows Server, however you have no way to access it. To do this we must do two things, create the Public IP Resource and configure the Network Interface to use it.
+At this point you should have a running Virtual Machine in Azure running Linux Server, however you have no way to access it. To do this we must do two things, create the Public IP Resource and configure the Network Interface to use it.
 
 Create a Public IP Address that will assign an IP address:
 
 ```hcl
-resource "azurerm_public_ip" "main" {
-  name                = "${var.prefix}-pubip"
+resource "azurerm_public_ip" "linux" {
+  name                = "${var.prefix}-linux-pubip"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Static"
@@ -237,12 +238,12 @@ resource "azurerm_public_ip" "main" {
 Update the IP Configuration parameter of the Network Interface to attach the Public IP:
 
 ```hcl
-resource "azurerm_network_interface" "main" {
+resource "azurerm_network_interface" "linux" {
   ...
 
   ip_configuration {
     ...
-    public_ip_address_id  = azurerm_public_ip.main.id
+    public_ip_address_id  = azurerm_public_ip.linux.id
   }
 }
 ```
@@ -253,7 +254,7 @@ Running `terraform plan` should contain something like the following:
 
 ```sh
 # azurerm_network_interface.main will be updated in-place
-  ~ resource "azurerm_network_interface" "main" {
+  ~ resource "azurerm_network_interface" "linux" {
         ...
 
       ~ ip_configuration {
@@ -263,7 +264,7 @@ Running `terraform plan` should contain something like the following:
     }
 
   # azurerm_public_ip.main will be created
-  + resource "azurerm_public_ip" "main" {
+  + resource "azurerm_public_ip" "linux" {
       + allocation_method            = "Static"
       + fqdn                         = (known after apply)
       + id                           = (known after apply)
@@ -271,7 +272,7 @@ Running `terraform plan` should contain something like the following:
       + ip_address                   = (known after apply)
       + ip_version                   = "IPv4"
       + location                     = "centralus"
-      + name                         = "PREFIX-vm-pubip"
+      + name                         = "PREFIX-linuxvm-pubip"
       + public_ip_address_allocation = (known after apply)
       + resource_group_name          = "PREFIX-vm-rg"
       + sku                          = "Basic"
@@ -287,7 +288,7 @@ Run `terraform apply` to apply the changes.
 
 ### Outputs
 
-You now have all the infrastructure in place and can now Remote Desktop into the Windows Server VM we just stood up.
+You now have all the infrastructure in place and can now SSH into the Linux Server VM we just stood up.
 
 But wait, the Public IP was dynamically created, how do I access it?
 
@@ -296,18 +297,20 @@ You could check the value in the Azure Portal, however let's instead add an outp
 Add the following output:
 
 ```hcl
-output "private-ip" {
-  value       = azurerm_network_interface.main.private_ip_address
-  description = "Private IP Address"
+output "linux-private-ip" {
+  value       = azurerm_network_interface.linux.private_ip_address
+  description = "Linux Private IP Address"
 }
 
-output "public-ip" {
-  value       = azurerm_public_ip.main.ip_address
-  description = "Public IP Address"
+output "linux-public-ip" {
+  value       = azurerm_public_ip.linux.ip_address
+  description = "Linux Public IP Address"
 }
 ```
 
 Now run a `terraform refresh`, which will refresh your state file with the real-world infrastructure and resolve the new outputs you just created.
+
+The output should look similar to this:
 
 ```sh
 $ terraform refresh
@@ -326,13 +329,31 @@ public-ip = 168.61.55.117
 
 > Note: you can also run `terraform output` to see just these outputs without having to run refresh again.
 
-### Remote Desktop (optional)
+### Connect (optional)
 
-Using the Public IP output value, Remote Desktop into the Virtual Machine to verify connectivity.
-
-![](img/2018-05-09-14-55-42.png)
+Using the Public IP output value, SSH into the VM using the username and password created.
 
 Success! You have now stood up a Virtual Machine in Azure using Terraform!
+
+### Windows VM (extra credit)
+
+Add the Terraform needed to create another VM to the same subnet, but using a Windows Base image.
+This will require a slightly different `azurerm_network_interface` resource block, can you determine what needs to change based on the online docs?
+
+Hint:
+
+<details><summary>View Output</summary>
+<p>
+
+```sh
+publisher = "MicrosoftWindowsServer"
+offer     = "WindowsServer"
+sku       = "2016-Datacenter"
+version   = "latest"
+```
+
+</p>
+</details>
 
 ### Scaling the Virtual Machine (extra credit)
 
@@ -340,43 +361,7 @@ Utilize the [count meta arguemnt](https://www.terraform.io/intro/examples/count.
 
 ### Clean up
 
-When you are done, run `terraform destroy` to remove everything we created:
-
-```sh
-terraform destroy
-azurerm_resource_group.main: Refreshing state... (ID: /subscriptions/.../resourceGroups/challenge03-rg)
-azurerm_public_ip.main: Refreshing state... (ID: /subscriptions/.../publicIPAddresses/challenge03-pubip)
-azurerm_virtual_network.main: Refreshing state... (ID: /subscriptions/.../virtualNetworks/challenge03-vnet)
-azurerm_subnet.main: Refreshing state... (ID: /subscriptions/.../subnets/challenge03-subnet)
-azurerm_network_interface.main: Refreshing state... (ID: /subscriptions/.../networkInterfaces/challenge03-nic)
-azurerm_virtual_machine.main: Refreshing state... (ID: /subscriptions/.../virtualMachines/challenge03-vm)
-
-An execution plan has been generated and is shown below.
-Resource actions are indicated with the following symbols:
-  - destroy
-
-Terraform will perform the following actions:
-
-  - azurerm_network_interface.main
-
-  - azurerm_public_ip.main
-
-  - azurerm_resource_group.main
-
-  - azurerm_subnet.main
-
-  - azurerm_virtual_machine.main
-
-  - azurerm_virtual_network.main
-
-
-Plan: 0 to add, 0 to change, 6 to destroy.
-
-Do you really want to destroy?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-...
-```
+When you are done, run `terraform destroy` to remove everything we created.
 
 ## Advanced areas to explore
 

@@ -13,3 +13,4 @@ notes.md
 301-workspaces/solution/run.sh
 
 examples/
+!*/solution*/terraform.tfvars

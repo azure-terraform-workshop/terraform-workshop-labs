@@ -1,3 +1,37 @@
+# Azure Virtual Machine
+
+## Expected Outcome
+
+In this challenge, you will create a Azure Virtual Machine and use the `custom_data` argument to provision a simple web app.
+
+You will gradually add Terraform configuration to build all the resources needed to be able to login to the Azure Virtual Machine.
+
+The resources you will use in this challenge:
+
+- Resource Group
+- Virtual Network
+- Subnet
+- Network Interface
+- Virtual Machine
+- Public IP Address
+
+## How to
+
+### Create the base Terraform Configuration
+
+Change directory into a folder specific to this challenge.
+
+For example: `cd ~/TerraformWorkshop/custom-data/`.
+
+We will start with a few of the basic resources needed.
+
+Create a `main.tf` file to hold our configuration.
+
+### Create Variables
+
+Create a few variables that will help keep our code clean:
+
+```hcl
 variable "prefix" {
   description = "Unique prefix, no dashes or numbers please."
 }
@@ -5,13 +39,24 @@ variable "prefix" {
 variable "location" {}
 variable "admin_username" {}
 variable "admin_password" {}
+```
 
-# Create a resource group
+### Create a Resource Group
+
+Now create a Resource Group to contain all of our infrastructure using the variables to interpolate the parameters:
+
+```hcl
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.prefix}-provisioner-rg"
+  name     = "${var.prefix}-customdata-rg"
   location = var.location
 }
-# Create virtual network
+```
+
+### Create Virtual Networking
+
+Create a Virtual Network, Subnet, and Public IP:
+
+```hcl
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.prefix}TFVnet"
   address_space       = ["10.0.0.0/16"]
@@ -19,7 +64,6 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-# Create subnet
 resource "azurerm_subnet" "subnet" {
   name                 = "${var.prefix}TFSubnet"
   resource_group_name  = azurerm_resource_group.rg.name
@@ -27,16 +71,20 @@ resource "azurerm_subnet" "subnet" {
   address_prefix       = "10.0.1.0/24"
 }
 
-# Create public IP
 resource "azurerm_public_ip" "publicip" {
-  name                = "${var.prefix}publicipprovision"
+  name                = "${var.prefix}publicipcustomdata"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
-  domain_name_label   = "${lower(var.prefix)}publicipprovision"
+  domain_name_label   = "${lower(var.prefix)}publicipcustomdata"
 }
+```
 
-# Create Network Security Group and rules
+### Create Network Security Group
+
+Create an NSG with two rules, one to allow SSH (22) and another for our web app traffic (8000):
+
+```hcl
 resource "azurerm_network_security_group" "nsg" {
   name                = "${var.prefix}TFNSG"
   location            = var.location
@@ -70,8 +118,13 @@ resource "azurerm_network_security_rule" "app" {
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
 }
+```
 
-# Create network interface
+### Create the NIC and VM
+
+Add the last networking piece and the actual VM:
+
+```hcl
 resource "azurerm_network_interface" "nic" {
   name                      = "${var.prefix}NIC"
   location                  = var.location
@@ -112,43 +165,88 @@ resource "azurerm_virtual_machine" "vm" {
     computer_name  = "${var.prefix}TFVM"
     admin_username = var.admin_username
     admin_password = var.admin_password
+    custom_data          = <<-SCRIPT
+#!/bin/bash
+
+# Setup logging
+logfile="/home/${var.admin_username}/custom-data.log"
+exec > $logfile 2>&1
+
+python3 -V
+sudo apt update
+sudo apt install -y python3-pip python3-flask
+python3 -m flask --version
+
+sudo cat << EOF > /home/${var.admin_username}/hello.py
+from flask import Flask
+import requests
+
+app = Flask(__name__)
+
+import requests
+@app.route('/')
+def hello_world():
+    return """<!DOCTYPE html>
+<html>
+<head>
+    <title>Kittens</title>
+</head>
+<body>
+    <img src="http://placekitten.com/200/300" alt="User Image">
+</body>
+</html>"""
+EOF
+
+chmod +x /home/${var.admin_username}/hello.py
+
+sudo -b FLASK_APP=/home/${var.admin_username}/hello.py flask run --host=0.0.0.0 --port=8000
+SCRIPT
   }
 
   os_profile_linux_config {
     disable_password_authentication = false
   }
-
-  provisioner "file" {
-    connection {
-      host     = azurerm_public_ip.publicip.fqdn
-      type     = "ssh"
-      user     = var.admin_username
-      password = var.admin_password
-    }
-
-    source      = "hello.py"
-    destination = "hello.py"
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      host     = azurerm_public_ip.publicip.fqdn
-      type     = "ssh"
-      user     = var.admin_username
-      password = var.admin_password
-    }
-
-    inline = [
-      "python3 -V",
-      "sudo apt update",
-      "sudo apt install -y python3-pip python3-flask",
-      "python3 -m flask --version",
-      "sudo FLASK_APP=hello.py nohup flask run --host=0.0.0.0 --port=8000 &",
-      "sleep 1"
-    ]
-  }
 }
+```
 
+> Note: Carefully look at the `custom_data` argument, especially how there are variable inserts into the script.
+
+### Add an Output
+
+Create an output that will allow for easy navigation to the web app:
+
+```hcl
 output "app-URL" {
   value = "http://${azurerm_public_ip.publicip.fqdn}:8000"
 }
+```
+
+### Pass in Variables
+
+Create a file called 'terraform.tfvars' and add the following variables:
+
+```sh
+prefix   = ""
+location = ""
+admin_username = "Plankton"
+admin_password = "Password1234!"
+```
+
+### Run Terraform Workflow
+
+Run `terraform init` since this is the first time we are running Terraform from this directory.
+
+Run `terraform plan` where you should see the plan of all the new resources.
+
+Run `terraform apply` to create all the infrastructure.
+
+After a successful apply, navigate to the listed URL to see the web app.
+
+### Clean up
+
+When you are done, run `terraform destroy` to remove everything we created.
+
+## Advanced areas to explore
+
+1. Convert the inline `custom_data` script to use the [Terraform Template](https://www.terraform.io/docs/providers/template/d/file.html) data resource.
+2. Create additional customization of the `custom_data` script to pass in your own "src" image URL.

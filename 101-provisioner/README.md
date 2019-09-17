@@ -27,44 +27,44 @@ resource "azurerm_virtual_machine" "vm" {
 
     <...snip...>
 
-    provisioner "file" {
-        connection {
-            host     = ...
-            type     = "ssh"
-            user     = "${var.admin_username}"
-            password = "${var.admin_password}"
-        }
-
-        source      = "newfile.txt"
-        destination = "newfile.txt"
+  provisioner "file" {
+    connection {
+      host     = azurerm_public_ip.publicip.fqdn
+      type     = "ssh"
+      user     = var.admin_username
+      password = var.admin_password
     }
 
-    provisioner "remote-exec" {
-        connection {
-            host     = ...
-            type     = "ssh"
-            user     = "${var.admin_username}"
-            password = "${var.admin_password}"
-        }
+    source      = "hello.py"
+    destination = "hello.py"
+  }
 
-        inline = [
-        "ls -a",
-        "cat newfile.txt"
-        ]
+  provisioner "remote-exec" {
+    connection {
+      host     = azurerm_public_ip.publicip.fqdn
+      type     = "ssh"
+      user     = var.admin_username
+      password = var.admin_password
     }
 
+    inline = [
+      "python3 -V",
+      "sudo apt update",
+      "sudo apt install -y python3-pip python3-flask",
+      "python3 -m flask --version",
+      "sudo FLASK_APP=hello.py nohup flask run --host=0.0.0.0 --port=8000 &",
+      "sleep 1"
+    ]
+  }
 }
-
 ```
 
 As this example shows, you can define more than one provisioner in a resource block. The [file](https://www.terraform.io/docs/provisioners/file.html) and [remote-exec](https://www.terraform.io/docs/provisioners/remote-exec.html) providers are used to perform two simple setup tasks:
 
--   File copies a text file from the machine that is running Terraform to the new VM instance.
--   Remote-exec runs two commands to list the home folder contents and display the contents of the text file.
+-   File copies a python file from the machine that is running Terraform to the new VM instance.
+-   Remote-exec runs commands to start a python flask app.
 
 Both providers need a [connection](https://www.terraform.io/docs/provisioners/connection.html) to the new virtual machine to do their jobs. To simplify things, the example uses password authentication. In practice, you are more likely to use SSH keys, and for WinRM connections, certificates to authenticate.
-
-This example could be modified to copy a shell script to the new instance and then execute the script, perhaps using arguments derived from environment variables or resource attributes.
 
 ### Running provisioners
 
@@ -75,96 +75,104 @@ Although we don't show it in the example configuration, there is a way to define
 The full configuration is:
 
 ```hcl
-variable "admin_username" {
-  default = "plankton"
-}
-variable "admin_password" {
-  default = "Password1234!"
+variable "prefix" {
+  description = "Unique prefix, no dashes or numbers please."
 }
 
-variable "resource_prefix" {
-  default = "PREFIX" #no dashes or numbers
-}
-
-# You'll usually want to set this to a region near you.
-variable "location" {
-  default = "centralus"
-}
+variable "location" {}
+variable "admin_username" {}
+variable "admin_password" {}
 
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.resource_prefix}TFResourceGroup"
-  location = "${var.location}"
+  name     = "${var.prefix}-provisioner-rg"
+  location = var.location
 }
 # Create virtual network
 resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.resource_prefix}TFVnet"
+  name                = "${var.prefix}TFVnet"
   address_space       = ["10.0.0.0/16"]
-  location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
 }
 
 # Create subnet
 resource "azurerm_subnet" "subnet" {
-  name                 = "${var.resource_prefix}TFSubnet"
-  resource_group_name  = "${azurerm_resource_group.rg.name}"
-  virtual_network_name = "${azurerm_virtual_network.vnet.name}"
+  name                 = "${var.prefix}TFSubnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefix       = "10.0.1.0/24"
 }
 
 # Create public IP
 resource "azurerm_public_ip" "publicip" {
-  name                = "${var.resource_prefix}TFPublicIP"
-  location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
+  name                = "${var.prefix}publicipprovision"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
-  domain_name_label   = "${lower(var.resource_prefix)}publicip"
+  domain_name_label   = "${lower(var.prefix)}publicipprovision"
 }
 
-# Create Network Security Group and rule
+# Create Network Security Group and rules
 resource "azurerm_network_security_group" "nsg" {
-  name                = "${var.resource_prefix}TFNSG"
-  location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
+  name                = "${var.prefix}TFNSG"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
 
-  security_rule {
-    name                       = "SSH"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
+resource "azurerm_network_security_rule" "ssh" {
+  resource_group_name         = azurerm_resource_group.rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+  name                        = "SSH"
+  priority                    = 1001
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+}
+
+resource "azurerm_network_security_rule" "app" {
+  resource_group_name         = azurerm_resource_group.rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+  name                        = "App"
+  priority                    = 1002
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "8000"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
 }
 
 # Create network interface
 resource "azurerm_network_interface" "nic" {
-  name                      = "${var.resource_prefix}NIC"
-  location                  = "${var.location}"
-  resource_group_name       = "${azurerm_resource_group.rg.name}"
-  network_security_group_id = "${azurerm_network_security_group.nsg.id}"
+  name                      = "${var.prefix}NIC"
+  location                  = var.location
+  resource_group_name       = azurerm_resource_group.rg.name
+  network_security_group_id = azurerm_network_security_group.nsg.id
 
   ip_configuration {
-    name                          = "${var.resource_prefix}NICConfg"
-    subnet_id                     = "${azurerm_subnet.subnet.id}"
+    name                          = "${var.prefix}NICConfg"
+    subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.publicip.id}"
+    public_ip_address_id          = azurerm_public_ip.publicip.id
   }
 }
 
 # Create a Linux virtual machine
 resource "azurerm_virtual_machine" "vm" {
-  name                  = "${var.resource_prefix}TFVM"
-  location              = "${var.location}"
-  resource_group_name   = "${azurerm_resource_group.rg.name}"
-  network_interface_ids = ["${azurerm_network_interface.nic.id}"]
+  name                  = "${var.prefix}TFVM"
+  location              = var.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  network_interface_ids = [azurerm_network_interface.nic.id]
   vm_size               = "Standard_DS1_v2"
 
   storage_os_disk {
-    name              = "${var.resource_prefix}OsDisk"
+    name              = "${var.prefix}OsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
@@ -173,14 +181,14 @@ resource "azurerm_virtual_machine" "vm" {
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04.0-LTS"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
 
   os_profile {
-    computer_name  = "${var.resource_prefix}TFVM"
-    admin_username = "${var.admin_username}"
-    admin_password = "${var.admin_password}"
+    computer_name  = "${var.prefix}TFVM"
+    admin_username = var.admin_username
+    admin_password = var.admin_password
   }
 
   os_profile_linux_config {
@@ -189,68 +197,91 @@ resource "azurerm_virtual_machine" "vm" {
 
   provisioner "file" {
     connection {
-      host     = "${azurerm_public_ip.publicip.domain_name_label}.centralus.cloudapp.azure.com"
+      host     = azurerm_public_ip.publicip.fqdn
       type     = "ssh"
-      user     = "${var.admin_username}"
-      password = "${var.admin_password}"
+      user     = var.admin_username
+      password = var.admin_password
     }
 
-    source      = "newfile.txt"
-    destination = "newfile.txt"
+    source      = "hello.py"
+    destination = "hello.py"
   }
 
   provisioner "remote-exec" {
     connection {
-      host     = "${azurerm_public_ip.publicip.domain_name_label}.centralus.cloudapp.azure.com"
+      host     = azurerm_public_ip.publicip.fqdn
       type     = "ssh"
-      user     = "${var.admin_username}"
-      password = "${var.admin_password}"
+      user     = var.admin_username
+      password = var.admin_password
     }
 
     inline = [
-      "ls -a",
-      "cat newfile.txt"
+      "python3 -V",
+      "sudo apt update",
+      "sudo apt install -y python3-pip python3-flask",
+      "python3 -m flask --version",
+      "sudo FLASK_APP=hello.py nohup flask run --host=0.0.0.0 --port=8000 &",
+      "sleep 1"
     ]
   }
+}
 
+output "app-URL" {
+  value = "http://${azurerm_public_ip.publicip.fqdn}:8000"
 }
 ```
 
 To run the example configuration with provisioners:
 
 1.  Copy the configuration to a file named `main.tf`. It should be the only `.tf` file in the folder.
-2.  Create a file named `newfile.txt`. In the editor, add the following text: "Testing the file and remote-exec provisioners." Save the file and close the editor.
+2.  Create a file named `hello.py`.
+    1.  In the editor, add the following text: 
+    ```py
+    from flask import Flask
+    import requests
+
+    app = Flask(__name__)
+
+    import requests
+    @app.route('/')
+    def hello_world():
+        return """<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Kittens</title>
+    </head>
+    <body>
+        <img src="http://placekitten.com/200/300" alt="User Image">
+    </body>
+    </html>"""
+    ``` 
+    2.  Save the file and close the editor.
 3.  Run `terraform init`
 4.  Run `terraform plan`
 5.  Run `terraform apply`. When prompted to continue, answer `yes`.
 
-The following sample output has been truncated to show only the new output added by the provisioners:
+The following sample output has been truncated to show only the end of the output added by the provisioners (your actual output may differ slightly):
 
 ```
-azurerm_virtual_machine.vm: Still creating... (1m30s elapsed)
-azurerm_virtual_machine.vm: Provisioning with 'file'...
-azurerm_virtual_machine.vm: Provisioning with 'remote-exec'...
-azurerm_virtual_machine.vm (remote-exec): Connecting to remote host via SSH...
-azurerm_virtual_machine.vm (remote-exec):   Host: 13.77.173.240
-azurerm_virtual_machine.vm (remote-exec):   User: plankton
-azurerm_virtual_machine.vm (remote-exec):   Password: true
-azurerm_virtual_machine.vm (remote-exec):   Private key: false
-azurerm_virtual_machine.vm (remote-exec):   SSH Agent: false
-azurerm_virtual_machine.vm (remote-exec):   Checking Host Key: false
-azurerm_virtual_machine.vm (remote-exec): Connected!
-azurerm_virtual_machine.vm (remote-exec): .   .bash_logout  .cache       .profile
-azurerm_virtual_machine.vm (remote-exec): ..  .bashrc     newfile.txt  .ssh
-azurerm_virtual_machine.vm (remote-exec): Testing the file and remote-exec provisioners.
-azurerm_virtual_machine.vm: Creation complete after 1m34s (ID: /subscriptions/.../virtualMachines/myTFVM)
+...
 
-Apply complete! Resources: 7 added, 0 changed, 0 destroyed.
+azurerm_virtual_machine.vm (remote-exec): Processing triggers for mime-support (3.60ubuntu1) ...
+azurerm_virtual_machine.vm (remote-exec): Processing triggers for libc-bin (2.27-3ubuntu1) ...
+
+azurerm_virtual_machine.vm (remote-exec): Flask 0.12.2
+azurerm_virtual_machine.vm (remote-exec): Python 3.6.8 (default, Aug 20 2019, 17:12:48)
+azurerm_virtual_machine.vm (remote-exec): [GCC 8.3.0]
+azurerm_virtual_machine.vm (remote-exec): nohup: appending output to 'nohup.out'
+
+Apply complete!
 
 ```
 
 Continue the procedure from above by doing the following:
 
 1.  Run `terraform show` to examine the current state.
-2.  Update your provisioner text file and run a `terraform plan`. Were the results as expected?
+2.  Update the image src in the flask app to return a different image (Look for "http://placekitten.com/200/300").
+3.  Update your provisioner text file and run a `terraform plan`. Were the results as expected?
 
 ### Clean up
 
@@ -278,4 +309,3 @@ provisioner "remote-exec" {
     <...snip...>
 
 ```
-

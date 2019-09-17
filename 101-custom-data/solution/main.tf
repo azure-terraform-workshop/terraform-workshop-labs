@@ -8,7 +8,7 @@ variable "admin_password" {}
 
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.prefix}-provisioner-rg"
+  name     = "${var.prefix}-customdata-rg"
   location = var.location
 }
 # Create virtual network
@@ -29,11 +29,11 @@ resource "azurerm_subnet" "subnet" {
 
 # Create public IP
 resource "azurerm_public_ip" "publicip" {
-  name                = "${var.prefix}publicipprovision"
+  name                = "${var.prefix}publicipcustomdata"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
-  domain_name_label   = "${lower(var.prefix)}publicipprovision"
+  domain_name_label   = "${lower(var.prefix)}publicipcustomdata"
 }
 
 # Create Network Security Group and rules
@@ -112,40 +112,46 @@ resource "azurerm_virtual_machine" "vm" {
     computer_name  = "${var.prefix}TFVM"
     admin_username = var.admin_username
     admin_password = var.admin_password
+    custom_data          = <<-SCRIPT
+#!/bin/bash
+
+# Setup logging
+logfile="/home/${var.admin_username}/custom-data.log"
+exec > $logfile 2>&1
+
+python3 -V
+sudo apt update
+sudo apt install -y python3-pip python3-flask
+python3 -m flask --version
+
+sudo cat << EOF > /home/${var.admin_username}/hello.py
+from flask import Flask
+import requests
+
+app = Flask(__name__)
+
+import requests
+@app.route('/')
+def hello_world():
+    return """<!DOCTYPE html>
+<html>
+<head>
+    <title>Kittens</title>
+</head>
+<body>
+    <img src="http://placekitten.com/200/300" alt="User Image">
+</body>
+</html>"""
+EOF
+
+chmod +x /home/${var.admin_username}/hello.py
+
+sudo -b FLASK_APP=/home/${var.admin_username}/hello.py flask run --host=0.0.0.0 --port=8000
+SCRIPT
   }
 
   os_profile_linux_config {
     disable_password_authentication = false
-  }
-
-  provisioner "file" {
-    connection {
-      host     = azurerm_public_ip.publicip.fqdn
-      type     = "ssh"
-      user     = var.admin_username
-      password = var.admin_password
-    }
-
-    source      = "hello.py"
-    destination = "hello.py"
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      host     = azurerm_public_ip.publicip.fqdn
-      type     = "ssh"
-      user     = var.admin_username
-      password = var.admin_password
-    }
-
-    inline = [
-      "python3 -V",
-      "sudo apt update",
-      "sudo apt install -y python3-pip python3-flask",
-      "python3 -m flask --version",
-      "sudo FLASK_APP=hello.py nohup flask run --host=0.0.0.0 --port=8000 &",
-      "sleep 1"
-    ]
   }
 }
 

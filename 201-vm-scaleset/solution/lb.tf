@@ -3,8 +3,6 @@ resource "azurerm_public_ip" "main" {
   location            = azurerm_resource_group.main.location
   name                = "${var.prefix}-pubip"
   allocation_method   = "Static"
-  # sku                 = local.lb_sku
-  # domain_name_label   = "${var.prefix}-${random_pet.endpoint.id}"
 }
 
 resource "azurerm_lb" "main" {

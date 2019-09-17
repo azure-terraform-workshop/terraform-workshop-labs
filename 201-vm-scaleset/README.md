@@ -45,9 +45,9 @@ variable "vmss_count" {}
 Create a file `terraform.tfvars` and add the following configuration:
 
 ```hcl
-prefix = "PREFIX" # Update this to your name
-location = "centralus"
-username = "someadmin"
+prefix     = ""
+location   = ""
+username   = "someadmin"
 vmss_count = 1
 ```
 
@@ -56,13 +56,6 @@ vmss_count = 1
 Create a file `core.tf` and add the following configuration:
 
 ```hcl
-terraform {
-  required_version = ">= 0.12.6"
-  required_providers {
-    azurerm = "= 1.31"
-  }
-}
-
 resource "azurerm_resource_group" "main" {
   name     = "${var.prefix}-rg"
   location = var.location
@@ -154,8 +147,6 @@ resource "azurerm_public_ip" "main" {
   location            = azurerm_resource_group.main.location
   name                = "${var.prefix}-pubip"
   allocation_method   = "Static"
-  # sku                 = local.lb_sku
-  # domain_name_label   = "${var.prefix}-${random_pet.endpoint.id}"
 }
 
 resource "azurerm_lb" "main" {
@@ -210,6 +201,10 @@ Run `terraform apply` and type `yes` when prompted.
 Inspect the infrastructure in the portal.
 
 Change the VMSS count to another number and replan, does it match your expectations?
+
+## Advanced areas to explore
+
+1. Add the `custom_data` script from the previous lab to execute within the VM Scale Set. What changes would you have to make?
 
 ### Clean up
 

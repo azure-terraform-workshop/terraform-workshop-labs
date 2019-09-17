@@ -1,20 +1,9 @@
-terraform {
-  required_version = ">= 0.12.6"
-  required_providers {
-    azurerm = "= 1.31"
-  }
-}
+variable "prefix" {}
 
-variable "prefix" {
-  default = "PREFIX-vm"
-}
-
-variable "location" {
-  default = "centralus"
-}
+variable "location" {}
 
 resource "azurerm_resource_group" "main" {
-  name     = "${var.prefix}-rg"
+  name     = "${var.prefix}-vm-rg"
   location = var.location
 }
 
@@ -32,8 +21,9 @@ resource "azurerm_subnet" "main" {
   address_prefix       = "10.0.1.0/24"
 }
 
-resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}-nic"
+# Linux
+resource "azurerm_network_interface" "linux" {
+  name                = "${var.prefix}-linuxnic"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -41,26 +31,82 @@ resource "azurerm_network_interface" "main" {
     name                          = "config1"
     subnet_id                     = azurerm_subnet.main.id
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = azurerm_public_ip.main.id
+    public_ip_address_id          = azurerm_public_ip.linux.id
   }
 }
 
-resource "azurerm_virtual_machine" "main" {
-  name                  = "${var.prefix}-vm"
+resource "azurerm_virtual_machine" "linux" {
+  name                  = "${var.prefix}-linuxvm"
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
-  network_interface_ids = [azurerm_network_interface.main.id]
+  network_interface_ids = [azurerm_network_interface.linux.id]
   vm_size               = "Standard_A2_v2"
 
-  storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
-    version   = "latest"
+  storage_os_disk {
+    name              = "${var.prefix}linuxvm-osdisk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
   }
 
+  os_profile {
+    computer_name  = "${var.prefix}linuxvm"
+    admin_username = "testadmin"
+    admin_password = "Password1234!"
+  }
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+}
+
+resource "azurerm_public_ip" "linux" {
+  name                = "${var.prefix}-linux-pubip"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Static"
+}
+
+output "linux-private-ip" {
+  value       = azurerm_network_interface.linux.private_ip_address
+  description = "Linux Private IP Address"
+}
+
+output "linux-public-ip" {
+  value       = azurerm_public_ip.linux.ip_address
+  description = "Linux Public IP Address"
+}
+
+
+# Windows
+resource "azurerm_network_interface" "windows" {
+  name                = "${var.prefix}-windowsnic"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  ip_configuration {
+    name                          = "config1"
+    subnet_id                     = azurerm_subnet.main.id
+    private_ip_address_allocation = "dynamic"
+    public_ip_address_id          = azurerm_public_ip.windows.id
+  }
+}
+
+resource "azurerm_virtual_machine" "windows" {
+  name                  = "${var.prefix}-windowsvm"
+  location              = azurerm_resource_group.main.location
+  resource_group_name   = azurerm_resource_group.main.name
+  network_interface_ids = [azurerm_network_interface.windows.id]
+  vm_size               = "Standard_A2_v2"
+
   storage_os_disk {
-    name              = "${var.prefix}vm-osdisk"
+    name              = "${var.prefix}windowsvm-osdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -72,22 +118,28 @@ resource "azurerm_virtual_machine" "main" {
     admin_password = "Password1234!"
   }
 
+  storage_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
+    version   = "latest"
+  }
   os_profile_windows_config {}
 }
 
-resource "azurerm_public_ip" "main" {
-  name                = "${var.prefix}-pubip"
+resource "azurerm_public_ip" "windows" {
+  name                = "${var.prefix}-windows-pubip"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Static"
 }
 
-output "private-ip" {
-  value       = azurerm_network_interface.main.private_ip_address
-  description = "Private IP Address"
+output "windows-private-ip" {
+  value       = azurerm_network_interface.windows.private_ip_address
+  description = "Windows Private IP Address"
 }
 
-output "public-ip" {
-  value       = azurerm_public_ip.main.ip_address
-  description = "Public IP Address"
+output "windows-public-ip" {
+  value       = azurerm_public_ip.linux.ip_address
+  description = "Windows Public IP Address"
 }
