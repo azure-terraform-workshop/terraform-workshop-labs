@@ -88,6 +88,50 @@ resource "local_file" "foo" {
 }
 
 ```
+
+
+### Create Variables
+
+Create a file `variables.tf` and add the following configuration:
+
+```
+variable "prefix" {}
+variable "location" {}
+variable "address_space" {}
+variable "address_prefix" {}
+variable "name" {}
+variable "client_id" {}
+variable "client_secret" {}
+
+```
+
+### Supply values for variables
+
+Create a file `terraform.auto.tfvars` and fill in the values.  Use the client_id and client_secret of your service principal used to execute terraform.  Kubernetes needs this to be able to provision load balancers and infrastructure on the clusters behalf:
+
+```
+prefix="demo"
+name="k8s"
+location="eastus2"
+address_prefix="10.1.0.0/24"
+address_space="10.1.0.0/16"
+
+```
+Hint: 
+
+We will want to pass `client_id` and `client_secret` as vars to your terraform plan/applies
+### Run Terraform Workflow
+
+Run `terraform init` since this is the first time we are running Terraform from this directory.
+
+Run `terraform plan` and validate all resources are being created as desired.
+
+Run `terraform apply` and type `yes` when prompted.
+
+Inspect the infrastructure in the portal.
+
+Change the node count to another number and replan, does it match your expectations?
+
 ### Create kubernetes service to test and access
 
 Create `k8s-services.tf` and add the collowing configuration:
@@ -133,35 +177,6 @@ resource "kubernetes_service" "nginx" {
 ```
 
 
-
-### Create Variables
-
-Create a file `variables.tf` and add the following configuration:
-
-```
-variable "prefix" {}
-variable "location" {}
-variable "address_space" {}
-variable "address_prefix" {}
-variable "name" {}
-variable "client_id" {}
-variable "client_secret" {}
-
-```
-
-### Supply values for variables
-
-Create a file `terraform.auto.tfvars` and fill in the values.  Use the client_id and client_secret of your service principal used to execute terraform.  Kubernetes needs this to be able to provision load balancers and infrastructure on the clusters behalf:
-
-```
-prefix="demo"
-name="k8s"
-location="eastus2"
-address_prefix="10.1.0.0/24"
-address_space="10.1.0.0/16"
-client_id="xxxx..."
-client_secret="xxxx..."
-```
 
 
 ### Run Terraform Workflow
