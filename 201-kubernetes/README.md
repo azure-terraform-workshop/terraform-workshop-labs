@@ -174,7 +174,7 @@ Run `terraform apply` and type `yes` when prompted.
 
 Inspect the infrastructure in the portal.
 
-Change the VMSS count to another number and replan, does it match your expectations?
+Change the node count to another number and replan, does it match your expectations?
 
 ### Clean up
 
