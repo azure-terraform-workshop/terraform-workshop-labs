@@ -25,12 +25,13 @@ _(Note: we could also create this Resource Group using Terraform if we want - wh
 export ARM_SUBSCRIPTION_ID=
 export ARM_CLIENT_ID=
 export ARM_CLIENT_SECRET=
+export ARM_TENANT_ID=
 ```
 
 4. `cd` into `./templates` and execute the Packer build:
 ```
 packer validate ./web_server.json
-packer build -var 'user_id=<my unique user_id> ./web_server.json
+packer build -var 'user_id=<my unique user_id>' ./web_server.json
 ```
 
 _Note: the `user_id` variable is only for distinguising the name of your Packer image from your classmates' images and ensuring uniqueness._

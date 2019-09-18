@@ -27,4 +27,5 @@ EOF
 
 chmod +x /home/kyle/hello.py
 
-#sudo -b FLASK_APP=/home/kyle/hello.py flask run --host=0.0.0.0 --port=8000
+# include in custom-data for runtime
+# sudo -b FLASK_APP=/home/kyle/hello.py flask run --host=0.0.0.0 --port=8000
