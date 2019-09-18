@@ -38,63 +38,50 @@ variable "subnet_address_prefixes" {
 }
 
 module "networking" {
-  source  = "app.terraform.io/SOME_ORG/networking/azurerm"
-  version = "0.0.1"
+  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/networking/azurerm"
+  version = "0.12.0"
 
-  name                    = "${var.name}"
-  location                = "${var.location}"
-  vnet_address_spacing    = "${var.vnet_address_spacing}"
-  subnet_address_prefixes = "${var.subnet_address_prefixes}"
+  name                    = var.name
+  location                = var.location
+  vnet_address_spacing    = var.vnet_address_spacing
+  subnet_address_prefixes = var.subnet_address_prefixes
 }
 
-module "webserver" {
-  source  = "app.terraform.io/SOME_ORG/webserver/azurerm"
-  version = "0.0.1"
-
-  name      = "${var.name}"
-  location  = "${var.location}"
-  subnet_id = "${module.networking.subnet-ids[0]}"
-  count     = 2
-  username  = "${var.username}"
-  password  = "${var.password}"
-}
-
-output "networking_vnet" {
-  value = "${module.networking.virtualnetwork-ids}"
-}
-
-output "networking_subnets" {
-  value = "${module.networking.subnet-ids}"
-}
-
-output "webserver-vm-ids" {
-  value = "${module.webserver.vm-ids}"
-}
-
-output "webserver-private-ips" {
-  value = "${module.webserver.private-ips}"
+output "networking_info" {
+  value = {
+    vnet_ids   = module.networking.virtualnetwork-ids
+    subnet_ids = module.networking.subnet-ids
+  }
 }
 ```
 
+Update the source arguments to your organization by replacing "YOUR_ORG_NAME" with your TFE organization name.
+
 Commit the file and check the code into github.
+
+### Create a workspace
 
 Create a TFE workspace that uses the VSC connection to load this new repository.
 
-Be sure to select the terraform version to be `0.11.11` in the settings page:
+![](img/tfe-new-workspace.png)
 
-![](img/tfe-setting-tf-version.png)
+Select the repository and name the workspace the same thing "ptfe-workspace-modules"
+
+![](img/tfe-new-workspace-final.png)
 
 ### Add Modules
 
+Before we can use our Networking module, we need to add it to the Private Module Registry.
+
 Navigate back to Terraform Enterprise and click the "Modules" menu at the top of the page. From there click the "+ Add Module" button.
 
-![](img/2018-05-10-17-37-05.png)
+![](img/tfe-add-module.png)
 
-You are now ready to add your modules.
+Select the networking repository you forked earlier.
 
-![](img/2018-04-15-13-09-55.png)
+![](img/tfe-select-module-repo.png)
 
-Enter the name of the source repository you forked in the previous step. For example: 'YOUR_GITHUB_USERNAME/terraform-azurerm-networking`.
+> Note: You will see your github user name instead of 'azure-terraform-workshop/' since you forked this repo.
 
 Click "Publish Module".
 
@@ -110,13 +97,9 @@ Repeat this step for the other three modules:
 - terraform-azurerm-dataserver
 - terraform-azurerm-webserver
 
-### Consume Modules
+### Configure Workspace Variables
 
-Create a new workspace just like in the previous Challenge, except this time enter the working directory of "app-dev-modules" that will reference your the modules you just added.
-
-![](img/2018-05-10-17-40-35.png)
-
-### Configure Variables
+Navigate back to your "ptfe-workspace-modules" workspace.
 
 Set the Terraform Variables:
 
@@ -154,36 +137,11 @@ Set Environment Variables for your Azure Service Principal (be sure check the 's
 
 Click the "Queue Plan" button.
 
-![](img/2018-04-15-19-23-40.png)
+![](img/tfe-queue-plan.png)
 
 Wait for the Plan to complete.
 
-### Fix the Errors
-
-The `/app-dev-modules/main.tf` file references the wrong modules source. Update all the modules sources (in your forked `azureworkshop-workspaces` GitHub repo) to match your Terraform Enterprise Organization.
-
-For example:
-
-Change this:
-
-```hcl
-module "networking" {
-  source  = "app.terraform.io/cardinalsolutions/networking/azurerm"
-  version = "0.0.1"
-...
-}
-```
-
-To something like this:
-```hcl
-module "networking" {
-  source  = "app.terraform.io/YOUR_TFE_ORGANIZATION/networking/azurerm"
-  version = "0.0.1"
-...
-}
-```
-
-Queue a new Plan.
+You should see several additions to deploy your networking.
 
 ### Apply the Plan
 
@@ -195,14 +153,89 @@ Login to the at Azure Portal to see your infrastructure.
 
 ### Update a Module
 
-In the `azureworkshop-workspaces` repository, navigate to the `app-dev-modules/main.tf` file and update one (or several) of the modules versions from "0.0.1" to "0.0.2".
+In the `ptfe-workspace-modules` repository, navigate to the `main.tf` file.
 
-Commit your change and see what the changes show in the plan. What was the difference between version 0.0.1 and 0.0.2? Does this look like a safe change to make?
+Add the following to deploy the rest of your application (again, be sure to update the source references):
+
+```hcl
+module "webserver" {
+  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/webserver/azurerm"
+  version = "0.12.0"
+
+  name      = var.name
+  location  = var.location
+  subnet_id = module.networking.subnet-ids[0]
+  vm_count  = 1
+  username  = var.username
+  password  = var.password
+}
+
+module "appserver" {
+  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/appserver/azurerm"
+  version = "0.12.0"
+
+  name      = var.name
+  location  = var.location
+  subnet_id = module.networking.subnet-ids[1]
+  vm_count  = 1
+  username  = var.username
+  password  = var.password
+}
+
+module "dataserver" {
+  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/dataserver/azurerm"
+  version = "0.12.0"
+
+  name      = var.name
+  location  = var.location
+  subnet_id = module.networking.subnet-ids[2]
+  vm_count  = 1
+  username  = var.username
+  password  = var.password
+}
+
+output "webserver_info" {
+  value = {
+    vm_ids = module.webserver.vm-ids
+    vm_ips = module.webserver.private-ips
+  }
+}
+
+output "appserver_info" {
+  value = {
+    vm_ids = module.appserver.vm-ids
+    vm_ips = module.appserver.private-ips
+  }
+}
+
+output "dataserver_info" {
+  value = {
+    vm_ids = module.dataserver.vm-ids
+    vm_ips = module.dataserver.private-ips
+  }
+}
+
+```
+
+Commit your change and see what the changes show in the plan.
+
+If you are satisfied with the changes, apply the changes.
 
 ## Advanced areas to explore
 
-1. Update the modules to be Terraform 0.12 compliant, and then update Module tags to push a new version to the Private Module Registry.
-2. Update the workspace to use Terraform 0.12.6
+1. Make a change to a module repository and tag it in such a way that the change shows in your Private Module Registry.
+
+## Clean Up
+
+Add an Environment variable to your workspace "CONFIRM_DESTROY=1".
+
+Navigate to the workspace "Settings" -> "Destruction and Deletion".
+
+Click Queue Destroy Plan.
+
+![](img/tfe-destroy-plan.png)
+
+Once the plan completes, apply it to destroy your infrastructure.
 
 ## Resources
 
