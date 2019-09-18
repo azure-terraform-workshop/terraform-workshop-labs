@@ -38,3 +38,9 @@ _Note: the `user_id` variable is only for distinguising the name of your Packer 
 
 5. Go to the Azure GUI and view the newly created VM image.
 
+### Bonus
+
+Go and use this newly created image in a VM Scale Set.
+
+_Hint: we'll need to modify our previous `custom-data` bootstrap script now that we've offloaded some of the work to Packer._
+
