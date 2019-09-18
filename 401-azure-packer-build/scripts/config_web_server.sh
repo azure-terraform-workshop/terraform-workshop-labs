@@ -1,11 +1,17 @@
 #!/bin/bash
 
+# update packages
+sudo yum update -y
+
+# install Python3 and Flask
+sudo yum install -y centos-release-scl
+sudo yum install -y python3
 python3 -V
-sudo apt update
-sudo apt install -y python3-pip python3-flask
+pip3 -V
+pip3 install flask
 python3 -m flask --version
 
-sudo cat << EOF > /home/kyle/hello.py
+sudo cat << EOF > /opt/webapp/hello.py
 from flask import Flask
 import requests
 
@@ -25,7 +31,7 @@ def hello_world():
 </html>"""
 EOF
 
-chmod +x /home/kyle/hello.py
+chmod +x /opt/webapp/hello.py
 
 # include in custom-data for runtime
-# sudo -b FLASK_APP=/home/kyle/hello.py flask run --host=0.0.0.0 --port=8000
+# sudo -b FLASK_APP=/opt/webapp/hello.py flask run --host=0.0.0.0 --port=8000
