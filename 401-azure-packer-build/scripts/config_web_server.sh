@@ -11,6 +11,10 @@ pip3 -V
 pip3 install flask
 python3 -m flask --version
 
+# create webapp directory
+sudo mkdir -p /opt/webapp
+
+# generate webapp code
 sudo cat << EOF > /opt/webapp/hello.py
 from flask import Flask
 import requests
