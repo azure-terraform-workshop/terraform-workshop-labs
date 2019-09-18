@@ -83,8 +83,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
 }
 
 resource "local_file" "foo" {
-    content     = "${azurerm_kubernetes_cluster.aks.kube_config_raw}"
-    filename = "~/.kube/config"
+    content  = "${azurerm_kubernetes_cluster.aks.kube_config_raw}"
+    filename = pathexpand("~/.kube/config")
 }
 
 ```
