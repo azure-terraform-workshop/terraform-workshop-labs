@@ -81,7 +81,7 @@ Run `terraform apply -auto-approve` several times in a row, what happens to the 
 Use Terraform to generate public/private SSH keys dynamically.
 
 ```hcl
-resource "tls_private_key" "main" {
+resource "tls_private_key" "tls" {
   algorithm = "RSA"
 }
 ```
