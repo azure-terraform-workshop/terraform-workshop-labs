@@ -15,43 +15,139 @@ For example: `cd ~/TerraformWorkshop/vm-module/`.
 In order to organize your code, create the following folder structure with `main.tf` files.
 
 ```sh
-├── environments
-│   └── dev
-│       └── main.tf
+├ main.tf
 └── modules
-    └── my_virtual_machine
+    └── my_linux_vm
         └── main.tf
 ```
 
 ### Create the Module
 
-Inside the `my_virtual_machine` module folder copy over the terraform configuration from virtual machine lab.
-This will give you a great starting point.
+Inside the `my_linux_vm` module folder there should be a `main.tf` file with the following contents:
 
-### Create Variables
+> Note: This is very similar to the original VM lab.
 
-Extract name, vm size, username and password into variables without defaults.
+```hcl
+variable "prefix" {}
+variable "location" {}
+variable "username" {}
+variable "vm_size" {}
+
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "!"
+}
+
+resource "azurerm_resource_group" "main" {
+  location = var.location
+  name     = "${var.prefix}-my-rg"
+}
+
+resource "azurerm_virtual_network" "main" {
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  name                = "${var.prefix}-my-vnet"
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "main" {
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  name                 = "${var.prefix}-my-subnet"
+  address_prefix       = "10.0.1.0/24"
+}
+
+resource "azurerm_network_interface" "main" {
+  name                = "${var.prefix}-my-nic"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  ip_configuration {
+    name                          = "config1"
+    subnet_id                     = azurerm_subnet.main.id
+    private_ip_address_allocation = "dynamic"
+    public_ip_address_id          = azurerm_public_ip.main.id
+  }
+}
+
+resource "azurerm_virtual_machine" "main" {
+  name                  = "${var.prefix}-my-vm"
+  location              = azurerm_resource_group.main.location
+  resource_group_name   = azurerm_resource_group.main.name
+  network_interface_ids = [azurerm_network_interface.main.id]
+  vm_size               = "${var.vm_size}"
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name              = "${var.prefix}myvm-osdisk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+
+  os_profile {
+    computer_name  = "${var.prefix}myvm"
+    admin_username = var.username
+    admin_password = random_password.password.result
+  }
+}
+
+resource "azurerm_public_ip" "main" {
+  name                = "${var.prefix}-my-pubip"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Static"
+}
+
+output "vm-password" {
+  value       = random_password.password.result
+  description = "Dynamically generated password to access the VM."
+}
+output "private-ip" {
+  value       = azurerm_network_interface.main.private_ip_address
+  description = "Private IP Address"
+}
+
+output "public-ip" {
+  value       = azurerm_public_ip.main.ip_address
+  description = "Public IP Address"
+}
+```
+
+### Create Variables in Root
+
+In your root directory, there should be a `main.tf` file.
+
+Create "prefix", "location", and "username" variables without defaults.
 
 This will result in them being required.
 
 ```hcl
-variable "name" {}
-variable "vm_size" {}
+variable "prefix" {}
+variable "location" {}
 variable "username" {}
-variable "password" {}
 ```
 
 > Extra credit: How many other variables can you extract?
 
-### Create the Environment
-
-Change your working directory to the `environments/dev` folder.
+### Create the Module declaration in Root
 
 Update main.tf to declare your module, it could look similar to this:
 
 ```hcl
-module "myawesomewindowsvm" {
-  source = "../../modules/my_virtual_machine"
+module "myawesomelinuxvm-a" {
+  source   = "./modules/my_linux_vm"
 }
 ```
 
@@ -64,7 +160,7 @@ Run `terraform init`.
 ```sh
 Initializing modules...
 - module.myawesomewindowsvm
-  Getting source "../../modules/my_virtual_machine"
+  Getting source "./modules/my_linux_vm"
 ```
 
 ### Terraform Plan
@@ -72,36 +168,37 @@ Initializing modules...
 Run `terraform plan`.
 
 ```sh
+
 Error: Missing required argument
 
-  on main.tf line 2, in module "myawesomewindowsvm":
-   2: module "myawesomewindowsvm" {
+  on main.tf line 1, in module "myawesomelinuxvm-a":
+   1: module "myawesomelinuxvm-a" {
 
 The argument "prefix" is required, but no definition was found.
 
 
 Error: Missing required argument
 
-  on main.tf line 2, in module "myawesomewindowsvm":
-   2: module "myawesomewindowsvm" {
+  on main.tf line 1, in module "myawesomelinuxvm-a":
+   1: module "myawesomelinuxvm-a" {
 
-The argument "vm_size" is required, but no definition was found.
+The argument "location" is required, but no definition was found.
 
 
 Error: Missing required argument
 
-  on main.tf line 2, in module "myawesomewindowsvm":
-   2: module "myawesomewindowsvm" {
+  on main.tf line 1, in module "myawesomelinuxvm-a":
+   1: module "myawesomelinuxvm-a" {
 
 The argument "username" is required, but no definition was found.
 
 
 Error: Missing required argument
 
-  on main.tf line 2, in module "myawesomewindowsvm":
-   2: module "myawesomewindowsvm" {
+  on main.tf line 1, in module "myawesomelinuxvm-a":
+   1: module "myawesomelinuxvm-a" {
 
-The argument "password" is required, but no definition was found.
+The argument "vm_size" is required, but no definition was found.
 ```
 
 We have a problem! We didn't set required variables for our module.
@@ -109,26 +206,25 @@ We have a problem! We didn't set required variables for our module.
 Update the `main.tf` file:
 
 ```hcl
-module "myawesomewindowsvm" {
-  source   = "../../modules/my_virtual_machine"
-  prefix   = "PREFIX"
+module "myawesomelinuxvm-a" {
+  source   = "./modules/my_linux_vm"
+  prefix   = "${var.prefix}a"
+  location = var.location
+  username = var.username
   vm_size  = "Standard_A2_v2"
-  username = "someadmin"
-  password = "Password1234!"
 }
 ```
 
 Run `terraform plan` again, this time there should not be any errors and you should see your VM built from your module.
 
 ```sh
-  + module.myawesomewindowsvm.azurerm_resource_group.module
+  + module.myawesomelinuxvm-a.azurerm_resource_group.module
       id:                                 <computed>
       location:                           "centralus"
-      name:                               "awesomeapp-rg"
 
 ...
 
-Plan: 6 to add, 0 to change, 0 to destroy.
+Plan: 7 to add, 0 to change, 0 to destroy.
 ```
 
 ## Add Another Module
@@ -136,12 +232,12 @@ Plan: 6 to add, 0 to change, 0 to destroy.
 Add another `module` block describing another set of Virtual Machines:
 
 ```hcl
-module "differentwindowsvm" {
-  source = "../../modules/my_virtual_machine"
-  name   = "differentapp"
+module "myawesomelinuxvm-b" {
+  source   = "./modules/my_linux_vm"
+  prefix   = "${var.prefix}b"
+  location = var.location
+  username = var.username
   vm_size  = "Standard_A2_v2"
-  username = "${var.username}"
-  password = "${var.password}"
 }
 ```
 
@@ -156,8 +252,6 @@ We should see twice as much infrastructure in our plan.
   + resource "azurerm_resource_group" "main" {
       + id       = (known after apply)
       + location = "centralus"
-      + name     = "PREFIX-rg"
-      + tags     = (known after apply)
     }
 
 ...
@@ -166,42 +260,37 @@ We should see twice as much infrastructure in our plan.
   + resource "azurerm_resource_group" "main" {
       + id       = (known after apply)
       + location = "centralus"
-      + name     = "MOREPREFIX-rg"
-      + tags     = (known after apply)
     }
 
 ...
 
-Plan: 12 to add, 0 to change, 0 to destroy.
+Plan: 14 to add, 0 to change, 0 to destroy.
 
 ```
 
 ## More Variables
 
-In your `environments/dev/main.tf` file we can see some duplication and secrets we do not want to store in configuration.
+In your `environments/dev/main.tf` file we can see some duplication.
 
-Add two local variables to your environment `main.tf` file for username and password.
+Extract "vm_size" into a local variable to your environment `main.tf` and reference in each module.
 
 ```hcl
 locals {
-  username = "someadmin"
-  password = "Password1234!"
+  vm_size = "Standard_A2_v2"
 }
 ```
 
 Now reference them in the module blocks:
 
 ```hcl
-module "myawesomewindowsvm" {
+module "myawesomelinuxvm-a" {
   ...
-  username = local.username
-  password = local.password
+  vm_size = local.vm_size
 }
 
-module "differentwindowsvm" {
+module "myawesomelinuxvm-b" {
   ...
-  username = local.username
-  password = local.password
+  vm_size = local.vm_size
 }
 ```
 
@@ -213,8 +302,10 @@ Run `terraform plan` and verify that your plan succeeds and looks the same.
 
 ## Advanced areas to explore
 
-1. Use environment variables to load your secrets.
-2. Add a reference to the Public Terraform Module for [Azure Compute](https://registry.terraform.io/modules/Azure/compute/azurerm)
+1. Extend module outputs to root level outputs.
+2. Extract the Resource Group, Virtual Network, and Subnet into a "Networking" module and the Network Interface and Virtual Machine into a "VM" module and reference them with module declarations.
+3. Update the VM module to use SSH instead of password authentication. 
+4. Add a reference to the Public Terraform Module for [Azure Compute](https://registry.terraform.io/modules/Azure/compute/azurerm)
 
 ## Resources
 

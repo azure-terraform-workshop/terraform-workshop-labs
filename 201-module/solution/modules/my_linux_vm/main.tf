@@ -1,43 +1,35 @@
-terraform {
-  required_version = ">= 0.12.6"
-  required_providers {
-    azurerm = "= 1.31"
-  }
-}
-
 variable "prefix" {}
-variable "vm_size" {}
+variable "location" {}
 variable "username" {}
-variable "password" {}
-variable "address_space" {}
-variable "address_prefix" {}
+variable "vm_size" {}
 
-
-variable "location" {
-  default = "centralus"
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "!"
 }
 
 resource "azurerm_resource_group" "main" {
-  name     = "${var.prefix}-rg"
   location = var.location
+  name     = "${var.prefix}-my-rg"
 }
 
 resource "azurerm_virtual_network" "main" {
-  name                = "${var.prefix}-vnet"
-  address_space       = ["${var.address_space}"]
-  location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  name                = "${var.prefix}-my-vnet"
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "main" {
-  name                 = "${var.prefix}-subnet"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
-  address_prefix       = "${var.address_prefix}"
+  name                 = "${var.prefix}-my-subnet"
+  address_prefix       = "10.0.1.0/24"
 }
 
 resource "azurerm_network_interface" "main" {
-  name                = "${var.prefix}-nic"
+  name                = "${var.prefix}-my-nic"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -50,42 +42,53 @@ resource "azurerm_network_interface" "main" {
 }
 
 resource "azurerm_virtual_machine" "main" {
-  name                  = "${var.prefix}-vm"
+  name                  = "${var.prefix}-my-vm"
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
   network_interface_ids = [azurerm_network_interface.main.id]
   vm_size               = "${var.vm_size}"
 
   storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
 
   storage_os_disk {
-    name              = "${var.prefix}vm-osdisk"
+    name              = "${var.prefix}myvm-osdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
-  os_profile {
-    computer_name  = "${var.prefix}vm"
-    admin_username = var.username
-    admin_password = var.password
+  os_profile_linux_config {
+    disable_password_authentication = false
+
+    # ssh_keys {
+    #   path     = "/home/${var.username}/.ssh/authorized_keys"
+    #   key_data = tls_private_key.main.public_key_openssh
+    # }
   }
 
-  os_profile_windows_config {}
+  os_profile {
+    computer_name  = "${var.prefix}myvm"
+    admin_username = var.username
+    admin_password = random_password.password.result
+  }
 }
 
 resource "azurerm_public_ip" "main" {
-  name                = "${var.prefix}-pubip"
+  name                = "${var.prefix}-my-pubip"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Static"
 }
 
+output "vm-password" {
+  value       = random_password.password.result
+  description = "Dynamically generated password to access the VM."
+}
 output "private-ip" {
   value       = azurerm_network_interface.main.private_ip_address
   description = "Private IP Address"
