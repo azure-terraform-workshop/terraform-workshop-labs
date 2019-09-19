@@ -283,4 +283,3 @@ The plan should succeed and now pass the sentinel policy check.
 
 - [Policy](https://app.terraform.io/app/cardinalsolutions/settings/policies)
 - [Sentinel Language Spec](https://docs.hashicorp.com/sentinel/language/spec)
-- [Example Azure Policies](https://github.com/hashicorp/terraform-guides/tree/master/governance/second-generation/azure)

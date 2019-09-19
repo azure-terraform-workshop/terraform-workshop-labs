@@ -46,13 +46,6 @@ module "networking" {
   vnet_address_spacing    = var.vnet_address_spacing
   subnet_address_prefixes = var.subnet_address_prefixes
 }
-
-output "networking_info" {
-  value = {
-    vnet_ids   = module.networking.virtualnetwork-ids
-    subnet_ids = module.networking.subnet-ids
-  }
-}
 ```
 
 Update the source arguments to your organization by replacing "YOUR_ORG_NAME" with your TFE organization name.
@@ -193,28 +186,6 @@ module "dataserver" {
   username  = var.username
   password  = var.password
 }
-
-output "webserver_info" {
-  value = {
-    vm_ids = module.webserver.vm-ids
-    vm_ips = module.webserver.private-ips
-  }
-}
-
-output "appserver_info" {
-  value = {
-    vm_ids = module.appserver.vm-ids
-    vm_ips = module.appserver.private-ips
-  }
-}
-
-output "dataserver_info" {
-  value = {
-    vm_ids = module.dataserver.vm-ids
-    vm_ips = module.dataserver.private-ips
-  }
-}
-
 ```
 
 Commit your change and see what the changes show in the plan.

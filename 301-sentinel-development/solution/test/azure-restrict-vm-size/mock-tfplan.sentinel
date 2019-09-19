@@ -1,0 +1,1735 @@
+import "strings"
+import "types"
+
+_modules = {
+	"root": {
+		"data":      {},
+		"path":      [],
+		"resources": {},
+	},
+
+	"module.appserver": {
+		"data": {},
+		"path": [
+			"appserver",
+		],
+		"resources": {
+			"azurerm_network_interface": {
+				"module": {
+					0: {
+						"applied": {
+							"enable_accelerated_networking": false,
+							"enable_ip_forwarding":          false,
+							"ip_configuration": [
+								{
+									"name":                          "ipconfig-0",
+									"private_ip_address":            null,
+									"private_ip_address_allocation": "dynamic",
+									"private_ip_address_version":    "IPv4",
+									"public_ip_address_id":          null,
+								},
+							],
+							"location": "centralus",
+							"name":     "tstraub-appserver-nic0",
+							"network_security_group_id": null,
+							"resource_group_name":       "tstraub-appserver-rg",
+							"tags": {
+								"environment": "dev",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"applied_dns_servers.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"dns_servers.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"enable_accelerated_networking": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"enable_ip_forwarding": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"internal_dns_name_label": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"internal_fqdn": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"ip_configuration.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"ip_configuration.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"mac_address": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-appserver-nic0",
+								"old":      "",
+							},
+							"network_security_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"private_ip_address": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"private_ip_addresses.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-appserver-rg",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"virtual_machine_id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_resource_group": {
+				"module": {
+					0: {
+						"applied": {
+							"location": "centralus",
+							"name":     "tstraub-appserver-rg",
+							"tags": {
+								"environment": "dev",
+								"version":     "v0.12.0",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-appserver-rg",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"tags.version": {
+								"computed": false,
+								"new":      "v0.12.0",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_virtual_machine": {
+				"module": {
+					0: {
+						"applied": {
+							"additional_capabilities":          [],
+							"boot_diagnostics":                 [],
+							"delete_data_disks_on_termination": false,
+							"delete_os_disk_on_termination":    false,
+							"location":                         "centralus",
+							"name":                             "tstraub-appserver-vm0",
+							"os_profile": [
+								{
+									"admin_password": "Password1234!",
+									"admin_username": "testadmin",
+									"computer_name":  "tstraub-appservervm0",
+								},
+							],
+							"os_profile_linux_config": [
+								{
+									"disable_password_authentication": false,
+									"ssh_keys":                        [],
+								},
+							],
+							"os_profile_secrets":        [],
+							"os_profile_windows_config": [],
+							"plan": [],
+							"primary_network_interface_id": null,
+							"proximity_placement_group_id": null,
+							"resource_group_name":          "tstraub-appserver-rg",
+							"storage_data_disk": [
+								{
+									"create_option":             "Empty",
+									"disk_size_gb":              32,
+									"lun":                       0,
+									"managed_disk_type":         "Standard_LRS",
+									"name":                      "tstraub-appserver-vm0-data0",
+									"vhd_uri":                   null,
+									"write_accelerator_enabled": false,
+								},
+							],
+							"storage_image_reference": [
+								{
+									"id":        "",
+									"offer":     "CentOS",
+									"publisher": "OpenLogic",
+									"sku":       "7.3",
+									"version":   "latest",
+								},
+							],
+							"storage_os_disk": [
+								{
+									"caching":                   "ReadWrite",
+									"create_option":             "FromImage",
+									"image_uri":                 null,
+									"managed_disk_type":         "Standard_LRS",
+									"name":                      "tstraub-appserver-vm0-os",
+									"vhd_uri":                   null,
+									"write_accelerator_enabled": false,
+								},
+							],
+							"tags": {
+								"environment": "dev",
+							},
+							"vm_size": "Standard_D1_v2",
+							"zones":   null,
+						},
+						"destroy": false,
+						"diff": {
+							"additional_capabilities.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"availability_set_id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"boot_diagnostics.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"delete_data_disks_on_termination": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"delete_os_disk_on_termination": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"identity.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"license_type": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-appserver-vm0",
+								"old":      "",
+							},
+							"network_interface_ids.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"os_profile.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"os_profile.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"os_profile_linux_config.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.%": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.disable_password_authentication": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.ssh_keys.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"os_profile_secrets.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"os_profile_windows_config.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"plan.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"primary_network_interface_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"proximity_placement_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-appserver-rg",
+								"old":      "",
+							},
+							"storage_data_disk.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"storage_data_disk.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"storage_image_reference.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"storage_image_reference.0.%": {
+								"computed": false,
+								"new":      "5",
+								"old":      "",
+							},
+							"storage_image_reference.0.id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"storage_image_reference.0.offer": {
+								"computed": false,
+								"new":      "CentOS",
+								"old":      "",
+							},
+							"storage_image_reference.0.publisher": {
+								"computed": false,
+								"new":      "OpenLogic",
+								"old":      "",
+							},
+							"storage_image_reference.0.sku": {
+								"computed": false,
+								"new":      "7.3",
+								"old":      "",
+							},
+							"storage_image_reference.0.version": {
+								"computed": false,
+								"new":      "latest",
+								"old":      "",
+							},
+							"storage_os_disk.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"storage_os_disk.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"vm_size": {
+								"computed": false,
+								"new":      "Standard_D1_v2",
+								"old":      "",
+							},
+							"zones": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+		},
+	},
+
+	"module.dataserver": {
+		"data": {},
+		"path": [
+			"dataserver",
+		],
+		"resources": {
+			"azurerm_network_interface": {
+				"module": {
+					0: {
+						"applied": {
+							"enable_accelerated_networking": false,
+							"enable_ip_forwarding":          false,
+							"ip_configuration": [
+								{
+									"name":                          "ipconfig-0",
+									"private_ip_address":            null,
+									"private_ip_address_allocation": "dynamic",
+									"private_ip_address_version":    "IPv4",
+									"public_ip_address_id":          null,
+								},
+							],
+							"location": "centralus",
+							"name":     "tstraub-dataserver-nic0",
+							"network_security_group_id": null,
+							"resource_group_name":       "tstraub-dataserver-rg",
+							"tags": {
+								"environment": "dev",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"applied_dns_servers.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"dns_servers.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"enable_accelerated_networking": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"enable_ip_forwarding": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"internal_dns_name_label": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"internal_fqdn": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"ip_configuration.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"ip_configuration.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"mac_address": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-dataserver-nic0",
+								"old":      "",
+							},
+							"network_security_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"private_ip_address": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"private_ip_addresses.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-dataserver-rg",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"virtual_machine_id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_resource_group": {
+				"module": {
+					0: {
+						"applied": {
+							"location": "centralus",
+							"name":     "tstraub-dataserver-rg",
+							"tags": {
+								"environment": "dev",
+								"version":     "v0.12.0",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-dataserver-rg",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"tags.version": {
+								"computed": false,
+								"new":      "v0.12.0",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_virtual_machine": {
+				"module": {
+					0: {
+						"applied": {
+							"additional_capabilities":          [],
+							"boot_diagnostics":                 [],
+							"delete_data_disks_on_termination": false,
+							"delete_os_disk_on_termination":    false,
+							"location":                         "centralus",
+							"name":                             "tstraub-dataserver-vm0",
+							"os_profile": [
+								{
+									"admin_password": "Password1234!",
+									"admin_username": "testadmin",
+									"computer_name":  "tstraub-dataservervm0",
+								},
+							],
+							"os_profile_linux_config": [
+								{
+									"disable_password_authentication": false,
+									"ssh_keys":                        [],
+								},
+							],
+							"os_profile_secrets":        [],
+							"os_profile_windows_config": [],
+							"plan": [],
+							"primary_network_interface_id": null,
+							"proximity_placement_group_id": null,
+							"resource_group_name":          "tstraub-dataserver-rg",
+							"storage_data_disk": [
+								{
+									"create_option":             "Empty",
+									"disk_size_gb":              32,
+									"lun":                       0,
+									"managed_disk_type":         "Standard_LRS",
+									"name":                      "tstraub-dataserver-vm0-data0",
+									"vhd_uri":                   null,
+									"write_accelerator_enabled": false,
+								},
+								{
+									"create_option":             "Empty",
+									"disk_size_gb":              32,
+									"lun":                       1,
+									"managed_disk_type":         "Standard_LRS",
+									"name":                      "tstraub-dataserver-vm0-data1",
+									"vhd_uri":                   null,
+									"write_accelerator_enabled": false,
+								},
+							],
+							"storage_image_reference": [
+								{
+									"id":        "",
+									"offer":     "CentOS",
+									"publisher": "OpenLogic",
+									"sku":       "7.3",
+									"version":   "latest",
+								},
+							],
+							"storage_os_disk": [
+								{
+									"caching":                   "ReadWrite",
+									"create_option":             "FromImage",
+									"image_uri":                 null,
+									"managed_disk_type":         "Standard_LRS",
+									"name":                      "tstraub-dataserver-vm0-os",
+									"vhd_uri":                   null,
+									"write_accelerator_enabled": false,
+								},
+							],
+							"tags": {
+								"environment": "dev",
+							},
+							"vm_size": "Standard_D1_v2",
+							"zones":   null,
+						},
+						"destroy": false,
+						"diff": {
+							"additional_capabilities.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"availability_set_id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"boot_diagnostics.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"delete_data_disks_on_termination": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"delete_os_disk_on_termination": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"identity.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"license_type": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-dataserver-vm0",
+								"old":      "",
+							},
+							"network_interface_ids.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"os_profile.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"os_profile.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"os_profile_linux_config.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.%": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.disable_password_authentication": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.ssh_keys.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"os_profile_secrets.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"os_profile_windows_config.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"plan.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"primary_network_interface_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"proximity_placement_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-dataserver-rg",
+								"old":      "",
+							},
+							"storage_data_disk.#": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"storage_data_disk.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"storage_data_disk.1.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"storage_image_reference.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"storage_image_reference.0.%": {
+								"computed": false,
+								"new":      "5",
+								"old":      "",
+							},
+							"storage_image_reference.0.id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"storage_image_reference.0.offer": {
+								"computed": false,
+								"new":      "CentOS",
+								"old":      "",
+							},
+							"storage_image_reference.0.publisher": {
+								"computed": false,
+								"new":      "OpenLogic",
+								"old":      "",
+							},
+							"storage_image_reference.0.sku": {
+								"computed": false,
+								"new":      "7.3",
+								"old":      "",
+							},
+							"storage_image_reference.0.version": {
+								"computed": false,
+								"new":      "latest",
+								"old":      "",
+							},
+							"storage_os_disk.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"storage_os_disk.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"vm_size": {
+								"computed": false,
+								"new":      "Standard_D1_v2",
+								"old":      "",
+							},
+							"zones": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+		},
+	},
+
+	"module.networking": {
+		"data": {},
+		"path": [
+			"networking",
+		],
+		"resources": {
+			"azurerm_resource_group": {
+				"module": {
+					0: {
+						"applied": {
+							"location": "centralus",
+							"name":     "tstraub-networking-rg",
+							"tags": {
+								"environment": "dev",
+								"version":     "v0.12.0",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-networking-rg",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"tags.version": {
+								"computed": false,
+								"new":      "v0.12.0",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_subnet": {
+				"module": {
+					0: {
+						"applied": {
+							"address_prefix": "10.0.0.0/24",
+							"delegation":     [],
+							"name":           "tstraub-networking-subnet0",
+							"network_security_group_id": null,
+							"resource_group_name":       "tstraub-networking-rg",
+							"route_table_id":            null,
+							"service_endpoints":         null,
+							"virtual_network_name":      "tstraub-networking-vnet",
+						},
+						"destroy": false,
+						"diff": {
+							"address_prefix": {
+								"computed": false,
+								"new":      "10.0.0.0/24",
+								"old":      "",
+							},
+							"delegation.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"ip_configurations.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-networking-subnet0",
+								"old":      "",
+							},
+							"network_security_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-networking-rg",
+								"old":      "",
+							},
+							"route_table_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"service_endpoints": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"virtual_network_name": {
+								"computed": false,
+								"new":      "tstraub-networking-vnet",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+					1: {
+						"applied": {
+							"address_prefix": "10.0.1.0/24",
+							"delegation":     [],
+							"name":           "tstraub-networking-subnet1",
+							"network_security_group_id": null,
+							"resource_group_name":       "tstraub-networking-rg",
+							"route_table_id":            null,
+							"service_endpoints":         null,
+							"virtual_network_name":      "tstraub-networking-vnet",
+						},
+						"destroy": false,
+						"diff": {
+							"address_prefix": {
+								"computed": false,
+								"new":      "10.0.1.0/24",
+								"old":      "",
+							},
+							"delegation.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"ip_configurations.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-networking-subnet1",
+								"old":      "",
+							},
+							"network_security_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-networking-rg",
+								"old":      "",
+							},
+							"route_table_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"service_endpoints": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"virtual_network_name": {
+								"computed": false,
+								"new":      "tstraub-networking-vnet",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+					2: {
+						"applied": {
+							"address_prefix": "10.0.2.0/24",
+							"delegation":     [],
+							"name":           "tstraub-networking-subnet2",
+							"network_security_group_id": null,
+							"resource_group_name":       "tstraub-networking-rg",
+							"route_table_id":            null,
+							"service_endpoints":         null,
+							"virtual_network_name":      "tstraub-networking-vnet",
+						},
+						"destroy": false,
+						"diff": {
+							"address_prefix": {
+								"computed": false,
+								"new":      "10.0.2.0/24",
+								"old":      "",
+							},
+							"delegation.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"ip_configurations.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-networking-subnet2",
+								"old":      "",
+							},
+							"network_security_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-networking-rg",
+								"old":      "",
+							},
+							"route_table_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"service_endpoints": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"virtual_network_name": {
+								"computed": false,
+								"new":      "tstraub-networking-vnet",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_virtual_network": {
+				"module": {
+					0: {
+						"applied": {
+							"address_space": [
+								"10.0.0.0/16",
+							],
+							"ddos_protection_plan": [],
+							"dns_servers":          null,
+							"location":             "centralus",
+							"name":                 "tstraub-networking-vnet",
+							"resource_group_name":  "tstraub-networking-rg",
+							"tags": {
+								"environment": "dev",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"address_space.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"address_space.0": {
+								"computed": false,
+								"new":      "10.0.0.0/16",
+								"old":      "",
+							},
+							"ddos_protection_plan.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"dns_servers": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-networking-vnet",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-networking-rg",
+								"old":      "",
+							},
+							"subnet.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+		},
+	},
+
+	"module.webserver": {
+		"data": {},
+		"path": [
+			"webserver",
+		],
+		"resources": {
+			"azurerm_network_interface": {
+				"module": {
+					0: {
+						"applied": {
+							"enable_accelerated_networking": false,
+							"enable_ip_forwarding":          false,
+							"ip_configuration": [
+								{
+									"name":                          "ipconfig-0",
+									"private_ip_address":            null,
+									"private_ip_address_allocation": "dynamic",
+									"private_ip_address_version":    "IPv4",
+									"public_ip_address_id":          null,
+								},
+							],
+							"location": "centralus",
+							"name":     "tstraub-webserver-nic0",
+							"network_security_group_id": null,
+							"resource_group_name":       "tstraub-webserver-rg",
+							"tags": {
+								"environment": "dev",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"applied_dns_servers.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"dns_servers.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"enable_accelerated_networking": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"enable_ip_forwarding": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"internal_dns_name_label": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"internal_fqdn": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"ip_configuration.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"ip_configuration.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"mac_address": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-webserver-nic0",
+								"old":      "",
+							},
+							"network_security_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"private_ip_address": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"private_ip_addresses.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-webserver-rg",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"virtual_machine_id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_resource_group": {
+				"module": {
+					0: {
+						"applied": {
+							"location": "centralus",
+							"name":     "tstraub-webserver-rg",
+							"tags": {
+								"environment": "dev",
+								"version":     "v0.12.0",
+							},
+						},
+						"destroy": false,
+						"diff": {
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-webserver-rg",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"tags.version": {
+								"computed": false,
+								"new":      "v0.12.0",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+			"azurerm_virtual_machine": {
+				"module": {
+					0: {
+						"applied": {
+							"additional_capabilities":          [],
+							"boot_diagnostics":                 [],
+							"delete_data_disks_on_termination": true,
+							"delete_os_disk_on_termination":    false,
+							"location":                         "centralus",
+							"name":                             "tstraub-webserver-vm0",
+							"os_profile": [
+								{
+									"admin_password": "Password1234!",
+									"admin_username": "testadmin",
+									"computer_name":  "tstraub-webservervm0",
+								},
+							],
+							"os_profile_linux_config": [
+								{
+									"disable_password_authentication": false,
+									"ssh_keys":                        [],
+								},
+							],
+							"os_profile_secrets":        [],
+							"os_profile_windows_config": [],
+							"plan": [],
+							"primary_network_interface_id": null,
+							"proximity_placement_group_id": null,
+							"resource_group_name":          "tstraub-webserver-rg",
+							"storage_image_reference": [
+								{
+									"id":        "",
+									"offer":     "CentOS",
+									"publisher": "OpenLogic",
+									"sku":       "7.3",
+									"version":   "latest",
+								},
+							],
+							"storage_os_disk": [
+								{
+									"caching":                   "ReadWrite",
+									"create_option":             "FromImage",
+									"image_uri":                 null,
+									"managed_disk_type":         "Standard_LRS",
+									"name":                      "tstraub-webserver-vm0-os",
+									"vhd_uri":                   null,
+									"write_accelerator_enabled": false,
+								},
+							],
+							"tags": {
+								"environment": "dev",
+							},
+							"vm_size": "Standard_D1_v2",
+							"zones":   null,
+						},
+						"destroy": false,
+						"diff": {
+							"additional_capabilities.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"availability_set_id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"boot_diagnostics.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"delete_data_disks_on_termination": {
+								"computed": false,
+								"new":      "true",
+								"old":      "",
+							},
+							"delete_os_disk_on_termination": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"id": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"identity.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"license_type": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"location": {
+								"computed": false,
+								"new":      "centralus",
+								"old":      "",
+							},
+							"name": {
+								"computed": false,
+								"new":      "tstraub-webserver-vm0",
+								"old":      "",
+							},
+							"network_interface_ids.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"os_profile.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"os_profile.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"os_profile_linux_config.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.%": {
+								"computed": false,
+								"new":      "2",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.disable_password_authentication": {
+								"computed": false,
+								"new":      "false",
+								"old":      "",
+							},
+							"os_profile_linux_config.0.ssh_keys.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"os_profile_secrets.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"os_profile_windows_config.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"plan.#": {
+								"computed": false,
+								"new":      "0",
+								"old":      "",
+							},
+							"primary_network_interface_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"proximity_placement_group_id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"resource_group_name": {
+								"computed": false,
+								"new":      "tstraub-webserver-rg",
+								"old":      "",
+							},
+							"storage_data_disk.#": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"storage_image_reference.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"storage_image_reference.0.%": {
+								"computed": false,
+								"new":      "5",
+								"old":      "",
+							},
+							"storage_image_reference.0.id": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+							"storage_image_reference.0.offer": {
+								"computed": false,
+								"new":      "CentOS",
+								"old":      "",
+							},
+							"storage_image_reference.0.publisher": {
+								"computed": false,
+								"new":      "OpenLogic",
+								"old":      "",
+							},
+							"storage_image_reference.0.sku": {
+								"computed": false,
+								"new":      "7.3",
+								"old":      "",
+							},
+							"storage_image_reference.0.version": {
+								"computed": false,
+								"new":      "latest",
+								"old":      "",
+							},
+							"storage_os_disk.#": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"storage_os_disk.0.%": {
+								"computed": true,
+								"new":      "",
+								"old":      "",
+							},
+							"tags.%": {
+								"computed": false,
+								"new":      "1",
+								"old":      "",
+							},
+							"tags.environment": {
+								"computed": false,
+								"new":      "dev",
+								"old":      "",
+							},
+							"vm_size": {
+								"computed": false,
+								"new":      "Standard_D1_v2",
+								"old":      "",
+							},
+							"zones": {
+								"computed": false,
+								"new":      "",
+								"old":      "",
+							},
+						},
+						"requires_new": false,
+					},
+				},
+			},
+		},
+	},
+}
+
+module_paths = [
+	[],
+	[
+		"appserver",
+	],
+	[
+		"dataserver",
+	],
+	[
+		"networking",
+	],
+	[
+		"webserver",
+	],
+]
+
+terraform_version = "0.12.8"
+
+variables = {
+	"location": "centralus",
+	"name":     "tstraub",
+	"password": "Password1234!",
+	"subnet_address_prefixes": [
+		"10.0.0.0/24",
+		"10.0.1.0/24",
+		"10.0.2.0/24",
+	],
+	"username": "testadmin",
+	"vnet_address_spacing": [
+		"10.0.0.0/16",
+	],
+}
+
+module = func(path) {
+	if types.type_of(path) is not "list" {
+		error("expected list, got", types.type_of(path))
+	}
+
+	if length(path) < 1 {
+		return _modules.root
+	}
+
+	addr = []
+	for path as p {
+		append(addr, "module")
+		append(addr, p)
+	}
+
+	return _modules[strings.join(addr, ".")]
+}
+
+data = _modules.root.data
+path = _modules.root.path
+resources = _modules.root.resources
