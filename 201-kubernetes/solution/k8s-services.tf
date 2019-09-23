@@ -1,3 +1,9 @@
+provider "kubernetes" {
+  version = "~> 1.9"
+  config_path = ".kube/config"
+  
+}
+
 resource "kubernetes_pod" "nginx" {
   metadata {
     name = "nginx-example"

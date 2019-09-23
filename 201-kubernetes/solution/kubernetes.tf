@@ -23,5 +23,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
 resource "local_file" "kube" {
   content  = azurerm_kubernetes_cluster.aks.kube_config_raw
-  filename = pathexpand("~/.kube/config")
+  filename = ".kube/config"
+
+  provisioner "local-exec" {
+    
+  }
 }

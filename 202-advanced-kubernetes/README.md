@@ -1,10 +1,9 @@
-# Azure Virtual Machine Scale Set
+# Simple Kubernetes cluster
 
 ## Expected Outcome
 
-In this challenge, you will create a kubernetes cluster, and deploy a service, in this case nginx.
+In this challenge, you will create a kubernetes cluster, and configure KEDA: Kubernetes Event Driven Autoscaling.  This allows one to run Azure serverless functions directly on your kubernetes cluster.
 
-The service to deploy is just an  example of how terraform can be used to manage kubernetes resources just like Azure resources.
 
 We will also need to use the client_id and client_secret of your service principal, so keep those values handy.
 
@@ -17,7 +16,8 @@ The resources you will use in this challenge:
 - Azure Kubernetes Service (AKS)
 - Load Balancer (auto generated)
 - Public IP Address (auto generated)
-- kubernetes_pod/kubernetes_service
+- helm
+- A bit of scripting to install KEDA
 
 ## How to
 
