@@ -86,6 +86,8 @@ This will download a zip file, extract it and copy to your `$HOME/bin` directory
 
 Verify you can run the following commands, with the appropriate results:
 
+> **Note:** Versions may be greater than what is listed here.
+
 **git**
 ```sh
 $ git --version
@@ -169,6 +171,8 @@ This will download a zip file, extract it and copy to your `/usr/local/bin/senti
 
 Verify you can run the following commands, with the appropriate results:
 
+> **Note:** Versions may be greater than what is listed here.
+
 **git**
 ```sh
 $ git --version
@@ -245,12 +249,14 @@ As one last step here, login to the [Azure Portal](https://portal.azure.com/), t
 
 Open up a terminal and change directory into a path that you would like to work out of (I suggest creating a "~/TerraformWorkshop" folder).
 
+> **Note:** The clone command is passing in a second argument to clone into the TerraformWorkshop folder directly.
+
 Then open the repository in VS Code.
 
 ```sh
-cd ~/TerraformWorkshop/
-git clone https://github.com/azure-terraform-workshop/terraform-workshop-labs.git
-code TerraformWorkshop
+cd ~/TerraformWorkshop/101-
+git clone https://github.com/azure-terraform-workshop/terraform-workshop-labs.git .
+code .
 ```
 
-> If running `code TerraformWorkshop` doesn't launch VS Code, open up VS Code manually and open the folder you cloned the repository to.
+> If running `code .` doesn't launch VS Code, open up VS Code manually and open the folder you cloned the repository to.

@@ -21,7 +21,7 @@ The resources you will use in this challenge:
 
 Change directory into a folder specific to this challenge.
 
-For example: `cd ~/TerraformWorkshop/virtual-machine/`.
+For example: `cd ~/TerraformWorkshop/101-virtual-machine/`.
 
 We will start with a few of the basic resources needed.
 

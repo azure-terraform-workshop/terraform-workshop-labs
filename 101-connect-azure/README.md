@@ -17,7 +17,7 @@ In this challenge, you will:
 
 Change directory into a folder specific to this challenge.
 
-For example: `cd ~/TerraformWorkshop/connect-azure/`.
+For example: `cd ~/TerraformWorkshop/101-connect-azure/`.
 
 Create a file named `main.tf` and add a single Resource Group resource.
 

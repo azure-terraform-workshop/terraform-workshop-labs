@@ -19,7 +19,7 @@ There are two docker containers that will be deployed:
 
 Change directory into a folder specific to this challenge.
 
-For example: `cd ~/TerraformWorkshop/container-instance/`.
+For example: `cd ~/TerraformWorkshop/101-container-instance/`.
 
 Create a new file called `main.tf` with the following contents:
 

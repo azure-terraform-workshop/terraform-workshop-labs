@@ -4,7 +4,7 @@
 
 Create and change directory into a folder specific to this challenge.
 
-For example: `cd ~/TerraformWorkshop/sentinel-development/`.
+For example: `cd ~/TerraformWorkshop/301-sentinel-development/`.
 
 ## Create Sentinel File
 

@@ -20,7 +20,7 @@ The resources you will use in this challenge:
 
 Change directory into a folder specific to this challenge.
 
-For example: `cd ~/TerraformWorkshop/virtual-machine-scale-set/`.
+For example: `cd ~/TerraformWorkshop/201-virtual-machine-scale-set/`.
 
 We will start with a few of the basic resources needed.
 

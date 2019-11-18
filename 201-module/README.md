@@ -10,7 +10,7 @@ In this challenge, you will create a module to contain a scalable virtual machin
 
 Change directory into a folder specific to this challenge.
 
-For example: `cd ~/TerraformWorkshop/vm-module/`.
+For example: `cd ~/TerraformWorkshop/201-vm-module/`.
 
 In order to organize your code, create the following folder structure with `main.tf` files.
 
