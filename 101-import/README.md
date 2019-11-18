@@ -17,16 +17,10 @@ In this challenge, you will:
 
 Change directory into a folder specific to this challenge.
 
-For example: `cd ~/TerraformWorkshop/101-connect-azure/`.
+For example: `cd ~/TerraformWorkshop/101-import/`.
 
-Create a file named `main.tf` and add a single Resource Group resource.
+Create an empty file named `main.tf`.
 
-```hcl
-resource "azurerm_resource_group" "main" {
-  name     = "{PREFIX}-myfirstrg"
-  location = "centralus"
-}
-```
 ---
 
 ## How To
