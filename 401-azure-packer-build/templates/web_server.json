@@ -12,28 +12,25 @@
         "azure_client_id",
         "azure_client_secret"
     ],
-    "builders": [
-        {
-            "type": "azure-arm",
-            "client_id": "{{ user `azure_client_id` }}",
-            "client_secret": "{{ user `azure_client_secret` }}",
-            "subscription_id": "{{ user `azure_subscription_id` }}",
-            "managed_image_resource_group_name": "{{ user `azure_resource_group` }}",
-            "location": "{{ user `azure_location` }}",
-            "image_publisher": "OpenLogic",
-            "image_offer": "CentOS-CI",
-            "image_sku": "7-CI",
-            "os_type": "Linux",
-            "os_disk_size_gb": "100",
-            "ssh_username": "packer",
-            "managed_image_name": "packer-centos-web-{{ user `user_id` }}-{{timestamp}}",
-            "azure_tags": {
-                "Product": "CMM-PACKER-DEMO-WEB-SERVER"
-            }
+    "builders": [{
+        "type": "azure-arm",
+        "client_id": "{{ user `azure_client_id` }}",
+        "client_secret": "{{ user `azure_client_secret` }}",
+        "subscription_id": "{{ user `azure_subscription_id` }}",
+        "managed_image_resource_group_name": "{{ user `azure_resource_group` }}",
+        "location": "{{ user `azure_location` }}",
+        "image_publisher": "OpenLogic",
+        "image_offer": "CentOS-CI",
+        "image_sku": "7-CI",
+        "os_type": "Linux",
+        "os_disk_size_gb": "100",
+        "ssh_username": "packer",
+        "managed_image_name": "packer-centos-web-{{ user `user_id` }}-{{timestamp}}",
+        "azure_tags": {
+            "Product": "TAP-PACKER-DEMO-WEB-SERVER"
         }
-    ],
-    "provisioners": [
-        {
+    }],
+    "provisioners": [{
             "type": "file",
             "source": "../files/just_for_fun.txt",
             "destination": "/tmp/"

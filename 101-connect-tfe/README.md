@@ -8,7 +8,7 @@ You will create a user and then be granted access to a Terraform Organization fo
 
 ### Create an Account
 
-Navigate to: <https://cmm-training.digitalinnovation.dev/account/new>
+Navigate to: <https://tap-tfe.digitalinnovation.dev/account/new>
 
 Fill out the fields, your username and email must be unique.
 

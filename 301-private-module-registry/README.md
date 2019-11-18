@@ -38,7 +38,7 @@ variable "subnet_address_prefixes" {
 }
 
 module "networking" {
-  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/networking/azurerm"
+  source  = "tap-tfe.digitalinnovation.dev/YOUR_ORG_NAME/networking/azurerm"
   version = "0.12.0"
 
   name                    = var.name
@@ -152,7 +152,7 @@ Add the following to deploy the rest of your application (again, be sure to upda
 
 ```hcl
 module "webserver" {
-  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/webserver/azurerm"
+  source  = "tap-tfe.digitalinnovation.dev/YOUR_ORG_NAME/webserver/azurerm"
   version = "0.12.0"
 
   name      = var.name
@@ -164,7 +164,7 @@ module "webserver" {
 }
 
 module "appserver" {
-  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/appserver/azurerm"
+  source  = "tap-tfe.digitalinnovation.dev/YOUR_ORG_NAME/appserver/azurerm"
   version = "0.12.0"
 
   name      = var.name
@@ -176,7 +176,7 @@ module "appserver" {
 }
 
 module "dataserver" {
-  source  = "cmm-training.digitalinnovation.dev/YOUR_ORG_NAME/dataserver/azurerm"
+  source  = "tap-tfe.digitalinnovation.dev/YOUR_ORG_NAME/dataserver/azurerm"
   version = "0.12.0"
 
   name      = var.name

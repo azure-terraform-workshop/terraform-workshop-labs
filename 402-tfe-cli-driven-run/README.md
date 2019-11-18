@@ -39,7 +39,7 @@ _Note: fill in a unique user id so you don't overlap / cause duplicates with you
 ```
 terraform {
   backend "remote" {
-    hostname     = "cmm-training.digitalinnovation.dev"
+    hostname     = "tap-tfe.digitalinnovation.dev"
     organization = "<my-tfe-org-name>"
 
     workspaces {
@@ -57,7 +57,7 @@ where `hostame` is the hostname of your TFE instance, `organization` is your spe
 6. Create a hidden file named `.terraformrc` in your home directory on your local machine, and add the following stanza:
 
 ```
-credentials "cmm-training.digitalinnovation.dev" {
+credentials "tap-tfe.digitalinnovation.dev" {
   token = "<my-tfe-api-token>"
 }
 ```
