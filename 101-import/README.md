@@ -245,8 +245,6 @@ When you are done, destroy the infrastructure, you no longer need it.
 $ terraform destroy
 azurerm_resource_group.main: Refreshing state... (ID: /subscriptions/.../resourceGroups/challenge01-rg)
 azurerm_resource_group.import: Refreshing state... (ID: /subscriptions/.../resourceGroups/myportal-rg)
-azurerm_resource_group.count[0]: Refreshing state... (ID: /subscriptions/.../resourceGroups/challenge01-rg-0)
-azurerm_resource_group.count[1]: Refreshing state... (ID: /subscriptions/.../resourceGroups/challenge01-rg-1)
 azurerm_storage_account.import: Refreshing state... (ID: /subscriptions/.../storageAccounts/myusernamestorageaccount)
 
 An execution plan has been generated and is shown below.
@@ -255,18 +253,12 @@ Resource actions are indicated with the following symbols:
 
 Terraform will perform the following actions:
 
-  - azurerm_resource_group.count[0]
-
-  - azurerm_resource_group.count[1]
-
   - azurerm_resource_group.import
-
-  - azurerm_resource_group.main
 
   - azurerm_storage_account.import
 
 
-Plan: 0 to add, 0 to change, 5 to destroy.
+Plan: 0 to add, 0 to change, 2 to destroy.
 
 Do you really want to destroy all resources?
   Terraform will destroy all your managed infrastructure, as shown above.
@@ -276,12 +268,10 @@ Do you really want to destroy all resources?
 
 ...
 
-azurerm_resource_group.count[0]: Destruction complete after 45s
-azurerm_resource_group.count[1]: Destruction complete after 45s
 azurerm_resource_group.main: Destruction complete after 45s
 azurerm_resource_group.import: Destruction complete after 46s
 
-Destroy complete! Resources: 5 destroyed.
+Destroy complete! Resources: 2 destroyed.
 ```
 
 Because the infrastructure is now managed by Terraform, we can destroy just like before.
