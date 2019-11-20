@@ -280,7 +280,7 @@ Plan: 14 to add, 0 to change, 0 to destroy.
 
 ## More Variables
 
-In your `environments/dev/main.tf` file we can see some duplication.
+In your `main.tf` file at the root we can see some duplication.
 
 Extract "vm_size" into a local variable to your environment `main.tf` and reference in each module.
 
