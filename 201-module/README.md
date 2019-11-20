@@ -141,6 +141,16 @@ variable "username" {}
 
 > Extra credit: How many other variables can you extract?
 
+### Pass in Variables
+
+Create a file called 'terraform.tfvars' and add the following variables:
+
+```sh
+prefix   = ""
+location = ""
+username = ""
+```
+
 ### Create the Module declaration in Root
 
 Update main.tf to declare your module, it could look similar to this:
