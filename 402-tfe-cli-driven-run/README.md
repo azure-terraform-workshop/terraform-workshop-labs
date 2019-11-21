@@ -9,7 +9,7 @@ In this lab, we will invoke a Terraform run on TFE via your local Terraform clie
 
 1. In the TFE UI, create a new Workspace. Click `skip this step` within the **Connect to VCS** section. Name the Workspace something unique, such as `tfecli-test-run`.
 
-2. Still in the TFE UI, within the **Variables** section of your newly created TFE Workspace, create the four neccesary environment variables for TFE to authenticate to Azure (and mark them as `sensitive`):
+2. Still in the TFE UI, within the **Variables** section of your newly created TFE Workspace, create the four necessary environment variables for TFE to authenticate to Azure (and mark them as `sensitive`):
 
 ```
 ARM_SUBSCRIPTION_ID
@@ -62,9 +62,11 @@ credentials "tap-tfe.digitalinnovation.dev" {
 }
 ```
 
-7. `terraform init`
-8. `terraform plan` - refresh the TFE UI and look for the running plan within your TFE Workspace
-9. `terraform apply` - refresh the TFE UI and look for the running apply within your TFE Workspace
+> Note: On Windows, the file must be named named `terraform.rc` and placed in the relevant user's `%APPDATA%` directory. The physical location of this directory depends on your Windows version and system configuration; use `$env:APPDATA` in PowerShell to find its location on your system. 
+
+1. `terraform init`
+2. `terraform plan` - refresh the TFE UI and look for the running plan within your TFE Workspace
+3. `terraform apply` - refresh the TFE UI and look for the running apply within your TFE Workspace
 
 
 ## Summary
