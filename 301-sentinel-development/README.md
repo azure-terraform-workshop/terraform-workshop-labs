@@ -15,6 +15,7 @@ Add imports:
 ```hcl
 import "tfplan"
 import "strings"
+import "types"
 ```
 
 Add a list of allowed VM Sizes:

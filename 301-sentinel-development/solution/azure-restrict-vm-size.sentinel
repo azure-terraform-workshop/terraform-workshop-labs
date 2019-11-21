@@ -5,6 +5,7 @@
 
 import "tfplan"
 import "strings"
+import "types"
 
 ##### Lists #####
 
