@@ -20,7 +20,7 @@ Verify you are part of an Organization:
 
 ### Generate Token
 
-Navigate to <https://tap-tfe.digitalinnovation.dev/app/settings/tokens> to generate a token:
+Navigate to <https://tap-tfe.digitalinnovation.dev/app/settings/tokens> to generate a **user** token:
 
 ![](img/tfe-token-gen.png)
 

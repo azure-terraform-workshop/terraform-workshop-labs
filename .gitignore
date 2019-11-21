@@ -16,3 +16,4 @@ examples/
 !*/solution*/terraform.tfvars
 
 **/.kube
+*.DS_Store

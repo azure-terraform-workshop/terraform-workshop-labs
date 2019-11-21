@@ -97,11 +97,6 @@ Outputs:
 
 guid = ad4efda0-d17d-559c-5cfe-1ed3ab9ce86b
 password = USCx=<D(7+KVWu:o
-tls-private = -----BEGIN RSA PRIVATE KEY-----
-...
------END RSA PRIVATE KEY-----
-
-tls-public = ssh-rsa ...
 ```
 
 This is great, but I wan the keys as files, how?
