@@ -1,9 +1,13 @@
+provider "azurerm" {
+  features {}
+}
+
 variable "vm_count" {
   default = 2
 }
 
 variable "prefix" {
-  default = "tstraub-live"
+  default = "prefix-live"
 }
 
 variable "location" {
@@ -26,7 +30,7 @@ resource "azurerm_subnet" "main" {
   name                 = "${var.prefix}-subnet"
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
-  address_prefix       = "10.0.1.0/24"
+  address_prefixes       = ["10.0.1.0/24"]
 }
 
 resource "azurerm_network_interface" "main" {
