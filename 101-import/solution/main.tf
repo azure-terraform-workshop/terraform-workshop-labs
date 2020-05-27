@@ -1,3 +1,7 @@
+provider "azurerm" {
+  features {}
+}
+
 // Import these resources that were manually created in the Azure Portal
 resource "azurerm_resource_group" "import" {
   name     = "tstraub-myportal-rg"
