@@ -27,6 +27,16 @@ We will start with a few of the basic resources needed.
 
 Create a `main.tf` file to hold our configuration.
 
+### Create Provider for Azure
+
+Enter in the Azure Provider
+
+```hcl
+provider "azurerm" {
+  features {}
+}
+```
+
 ### Create Variables
 
 Create a few variables that will help keep our code clean:
@@ -77,8 +87,8 @@ resource "azurerm_subnet" "main" {
 Create a file called 'terraform.tfvars' and add the folowing variables:
 
 ```sh
-prefix   = ""
-location = ""
+prefix   = "PREFIX"
+location = "centralus"
 ```
 
 > Note: Be sure to add a unique prefix, and an appropriate value for location. Do you know where to find valid 'locations'?
@@ -106,17 +116,20 @@ Terraform will perform the following actions:
       + id       = (known after apply)
       + location = "centralus"
       + name     = "PREFIX-vm-rg"
-      + tags     = (known after apply)
     }
 
   # azurerm_subnet.main will be created
   + resource "azurerm_subnet" "main" {
-      + address_prefix       = "10.0.1.0/24"
-      + id                   = (known after apply)
-      + ip_configurations    = (known after apply)
-      + name                 = "PREFIX-vm-subnet"
-      + resource_group_name  = "PREFIX-vm-rg"
-      + virtual_network_name = "PREFIX-vm-vnet"
+      + address_prefix                                 = (known after apply)
+      + address_prefixes                               = [
+          + "10.0.1.0/24",
+        ]
+      + enforce_private_link_endpoint_network_policies = false
+      + enforce_private_link_service_network_policies  = false
+      + id                                             = (known after apply)
+      + name                                           = "PREFIX-subnet"
+      + resource_group_name                            = "PREFIX-vm-rg"
+      + virtual_network_name                           = "PREFIX-vnet"
     }
 
   # azurerm_virtual_network.main will be created
@@ -124,18 +137,12 @@ Terraform will perform the following actions:
       + address_space       = [
           + "10.0.0.0/16",
         ]
+      + guid                = (known after apply)
       + id                  = (known after apply)
       + location            = "centralus"
-      + name                = "PREFIX-vm-vnet"
+      + name                = "PREFIX-vnet"
       + resource_group_name = "PREFIX-vm-rg"
-      + tags                = (known after apply)
-
-      + subnet {
-          + address_prefix = (known after apply)
-          + id             = (known after apply)
-          + name           = (known after apply)
-          + security_group = (known after apply)
-        }
+      + subnet              = (known after apply)
     }
 
 Plan: 3 to add, 0 to change, 0 to destroy.
@@ -265,18 +272,16 @@ Running `terraform plan` should contain something like the following:
 
   # azurerm_public_ip.main will be created
   + resource "azurerm_public_ip" "linux" {
-      + allocation_method            = "Static"
-      + fqdn                         = (known after apply)
-      + id                           = (known after apply)
-      + idle_timeout_in_minutes      = 4
-      + ip_address                   = (known after apply)
-      + ip_version                   = "IPv4"
-      + location                     = "centralus"
-      + name                         = "PREFIX-linuxvm-pubip"
-      + public_ip_address_allocation = (known after apply)
-      + resource_group_name          = "PREFIX-vm-rg"
-      + sku                          = "Basic"
-      + tags                         = (known after apply)
+      + allocation_method       = "Static"
+      + fqdn                    = (known after apply)
+      + id                      = (known after apply)
+      + idle_timeout_in_minutes = 4
+      + ip_address              = (known after apply)
+      + ip_version              = "IPv4"
+      + location                = "centralus"
+      + name                    = "PREFIX-linux-pubip"
+      + resource_group_name     = "PREFIX-vm-rg"
+      + sku                     = "Basic"
     }
 
 Plan: 1 to add, 1 to change, 0 to destroy.
@@ -323,8 +328,8 @@ azurerm_virtual_machine.main: Refreshing state... (ID: /subscriptions/.../virtua
 
 Outputs:
 
-private-ip = 10.0.1.4
-public-ip = 168.61.55.117
+linux-private-ip = 10.0.1.4
+linux-public-ip = 168.61.55.117
 ```
 
 > Note: you can also run `terraform output` to see just these outputs without having to run refresh again.

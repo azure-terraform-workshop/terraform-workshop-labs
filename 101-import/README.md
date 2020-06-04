@@ -79,6 +79,10 @@ We have two resources we need to import into our Terraform Configuration, to do 
 To create the base configuration place the following code into the `main.tf` file.
 
 ```hcl
+provider "azurerm" {
+  features {}
+}
+
 resource "azurerm_resource_group" "import" {
   name     = "myportal-rg"
   location = "centralus"
@@ -94,6 +98,8 @@ resource "azurerm_storage_account" "import" {
   enable_https_traffic_only = true
 }
 ```
+
+`terraform init`
 
 `terraform plan`
 

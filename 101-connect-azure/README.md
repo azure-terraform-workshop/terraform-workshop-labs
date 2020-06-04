@@ -22,6 +22,10 @@ For example: `cd ~/TerraformWorkshop/101-connect-azure/`.
 Create a file named `main.tf` and add a single Resource Group resource.
 
 ```hcl
+provider "azurerm" {
+  features {}
+}
+
 resource "azurerm_resource_group" "main" {
   name     = "{PREFIX}-myfirstrg"
   location = "centralus"
@@ -71,7 +75,7 @@ Initializing the backend...
 
 Initializing provider plugins...
 - Checking for available provider plugins...
-- Downloading plugin for provider "azurerm" (terraform-providers/azurerm) 1.32.1...
+- Downloading plugin for provider "azurerm" (hashicorp/azurerm) 2.11.0...
 
 The following providers do not have any version constraints in configuration,
 so the latest version was installed.
@@ -81,7 +85,7 @@ changes, it is recommended to add version = "..." constraints to the
 corresponding provider blocks in configuration, with the constraint strings
 suggested below.
 
-* provider.azurerm: version = "~> 1.32"
+* provider.azurerm: version = "~> 2.11"
 
 Terraform has been successfully initialized!
 
