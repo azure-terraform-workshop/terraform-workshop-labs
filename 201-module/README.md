@@ -33,6 +33,10 @@ variable "location" {}
 variable "username" {}
 variable "vm_size" {}
 
+provider "azurerm" {
+  features {}
+}
+
 resource "random_password" "password" {
   length           = 16
   special          = true
