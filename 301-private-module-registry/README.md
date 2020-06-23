@@ -29,6 +29,10 @@ variable "location" {}
 variable "username" {}
 variable "password" {}
 
+provider "azurerm" {
+  features {}
+}
+
 variable "vnet_address_spacing" {
   type = "list"
 }
@@ -54,7 +58,7 @@ Commit the file and check the code into github.
 
 ### Create a workspace
 
-Create a TFE workspace that uses the VSC connection to load this new repository.
+Create a TFE workspace that uses the VCS connection to load this new repository.
 
 ![](img/tfe-new-workspace.png)
 
@@ -115,7 +119,7 @@ Set the Terraform Variables:
     [
     "10.0.0.0/24",
     "10.0.1.0/24",
-    "10.0.2.0/24",
+    "10.0.2.0/24"
     ]
     ```
 

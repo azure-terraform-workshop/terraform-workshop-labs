@@ -1,3 +1,9 @@
+provider "azurerm" {
+  # whilst the `version` attribute is optional, we recommend pinning to a given version of the Provider
+  version = "=2.0.0"
+  features {}
+}
+
 variable "prefix" {
   description = "Unique prefix, no dashes or numbers please."
 }
@@ -76,7 +82,7 @@ resource "azurerm_network_interface" "nic" {
   name                      = "${var.prefix}NIC"
   location                  = var.location
   resource_group_name       = azurerm_resource_group.rg.name
-  network_security_group_id = azurerm_network_security_group.nsg.id
+  # network_security_group_id = azurerm_network_security_group.nsg.id
 
   ip_configuration {
     name                          = "${var.prefix}NICConfg"

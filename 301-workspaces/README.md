@@ -37,16 +37,20 @@ Click the advanced dropdown and enter the "VCS Branch" as "master".
 In your repository, create a `main.tf` file with the following contents:
 
 ```hcl
+provider "azurerm" {
+  features {}
+}
+
 variable "prefix" {}
 variable "environment" {}
 variable "location" {}
 
 resource "azurerm_resource_group" "main" {
   name     = "${var.prefix}-tfe-rg"
-  location = "${var.location}"
+  location = var.location
 
   tags = {
-    "environment" = "${var.environment}"
+    "environment" = var.environment
   }
 }
 ```
