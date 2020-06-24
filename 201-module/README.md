@@ -59,7 +59,7 @@ resource "azurerm_subnet" "main" {
   resource_group_name  = azurerm_resource_group.main.name
   virtual_network_name = azurerm_virtual_network.main.name
   name                 = "${var.prefix}-my-subnet"
-  address_prefix       = "10.0.1.0/24"
+  address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_network_interface" "main" {
@@ -80,7 +80,7 @@ resource "azurerm_virtual_machine" "main" {
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
   network_interface_ids = [azurerm_network_interface.main.id]
-  vm_size               = "${var.vm_size}"
+  vm_size               = var.vm_size
 
   storage_image_reference {
     publisher = "Canonical"
